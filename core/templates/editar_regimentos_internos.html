@@ -1,0 +1,111 @@
+{% load static %}
+{% include 'parciais/head.html' %}
+{% include 'parciais/navbar.html' %}
+{% include 'parciais/ferramentas.html' %}
+
+<div class="container p-2">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="text-center">Gerenciar Anexos</h2>
+    </div>
+    <div class="card-body">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="regimento-tab" data-bs-toggle="tab" data-bs-target="#regimento" type="button" role="tab" aria-controls="regimento" aria-selected="true">Regimento Interno</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="ato-criacao-tab" data-bs-toggle="tab" data-bs-target="#ato-criacao" type="button" role="tab" aria-controls="ato-criacao" aria-selected="false">Ato de Criação</button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="regimento" role="tabpanel" aria-labelledby="regimento-tab">
+          <h3>Gerenciar Regimento Interno</h3>
+          <ul class="list-group mb-4">
+            {% for regimento in regimentos_internos %}
+            <li class="list-group-item">
+              <!-- Seção de Regimento Interno -->
+              {% if regimento.status == True %}
+             
+              {% endif %}
+              {% if regimento.status == False %}
+            
+              {% endif %}
+              <a href="{% url 'visualizar_regimento_interno' regimento_id=regimento.id %}" class="btn btn-sm btn-link" target="_blank">
+                <i class="fa fa-file-pdf-o"></i> Visualizar PDF
+              </a>
+              {{ regimento }}
+        <!-- Seção de Regimento Interno -->
+<form method="post" class="d-inline" id="formularioExclusao_{{ regimento.id }}" action="{% url 'excluir_regimento_interno' regimento.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="regimento_id" value="{{ regimento.id }}">
+    <button type="button" class="btn btn-sm btn-danger" onclick="confirmarExclusao('{{ regimento.id }}')">Excluir</button>
+</form>
+{% comment %} <a type="button" href="{% url 'change_status_pdf' id=regimento.id %}" class="btn btn-sm btn-primary">Mudar Status</a> {% endcomment %}
+
+
+
+
+            </li>
+            {% endfor %}
+          </ul>
+          <h4>Adicionar Regimento Interno:</h4>
+          <!-- Formulário para adicionar Regimento Interno -->
+          <form method="post" enctype="multipart/form-data" class="d-inline">
+            {% csrf_token %}
+            <div class="mb-3">
+              <input type="file" name="regimento_pdf" accept=".pdf" class="form-control mt-1">
+              <br>
+              <button type="submit" class="btn btn-primary mt-2">Enviar Regimento Interno</button>
+            </div>
+          </form>
+        </div>
+
+
+
+        <div class="tab-pane fade" id="ato-criacao" role="tabpanel" aria-labelledby="ato-criacao-tab">
+          <h3>Gerenciar Ato de criação</h3>
+          <ul class="list-group mb-4">
+            {% for unidade_academica in unidades_academicas %}
+            <li class="list-group-item">
+              <!-- Seção de Unidade Acadêmica -->
+              <a href="{% url 'visualizar_pdf' unidade_academica.id %}" class="btn btn-sm btn-link" target="_blank">
+                <i class="fa fa-file-pdf-o"></i> Visualizar PDF
+              </a>
+              {{ unidade_academica }}
+            </li>
+           <form method="post" class="d-inline" id="formularioExclusao_{{ unidade_academica.id }}" action="{% url 'excluir_unidade' unidade_academica.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="unidade_id" value="{{ unidade_academica.id }}">
+    <button type="submit" class="btn btn-sm btn-danger" onclick="confirmarExclusao('{{ unidade_academica.id }}')">Excluir</button>
+</form>
+            {% endfor %}
+          </ul>
+          <h4>Adicionar Ato de criação:</h4>
+          <!-- Formulário para adicionar Unidade Acadêmica -->
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <input type="file" name="unidade_academica_pdf" accept=".pdf" class="form-control mt-1">
+              <br>
+              <button type="submit" class="btn btn-primary mt-2">Enviar Ato de criação</button>
+            </div>
+          </form>
+          
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'parciais/footer.html'%}
+
+<script>
+  function confirmarExclusao(regimentoId) {
+    console.log('Função confirmarExclusao chamada para regimentoId:', regimentoId);
+    if (confirm('Deseja realmente excluir este regimento interno?')) {
+      document.getElementById('formularioExclusao_' + regimentoId).submit();
+    }
+  }
+</script>
+
+

@@ -1,0 +1,53 @@
+<div class="container">
+    <nav class="navbar navbar-expand-lg bg-success mt-4 rounded">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex">
+                    <div class="nav-item">
+                        <a href="{% if laboratorio.id %}{% url 'editar_laboratorio' laboratorio.id 0 %}{% endif %}"
+                            class="btn btn-sm btn-light m-2 {% if request.resolver_match.view_name == 'editar_laboratorio' %}active{% endif %}">Laboratório</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% if laboratorio.id %}{% url 'editar_endereco' laboratorio.id %}{% endif %}"
+                            class="btn btn-sm btn-light m-2 {% if request.resolver_match.view_name == 'editar_endereco' %}active{% endif %}">Endereço</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% if laboratorio.id %}{% url 'editar_infraestrutura' laboratorio.id %}{% endif %}"
+                            class="btn btn-sm btn-light m-2 {% if request.resolver_match.view_name == 'editar_infraestrutura' %}active{% endif %}">Infraestrutura</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% if laboratorio.id %}{% url 'visualizar_membros_laboratorio' laboratorio.id %}{% endif %}"
+                            class="btn btn-sm btn-light m-2 {% if request.resolver_match.view_name == 'visualizar_membros_laboratorio' %}active{% endif %}">Membros do Laboratório</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% if laboratorio.id %}{% url 'adicionar_grupo_de_pesquisa' laboratorio.id %}{% endif %}"
+                            class="btn btn-sm btn-light m-2 {% if request.resolver_match.view_name == 'adicionar_grupo_de_pesquisa' %}active{% endif %}">Grupos de Pesquisa</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% if laboratorio.id %}{% url 'adicionar_formento' laboratorio.id %}{% endif %}"
+                            class="btn btn-sm btn-light m-2 {% if request.resolver_match.view_name == 'adicionar_formento' %}active{% endif %}">Parcerias e Fomento</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% if laboratorio.id %}{% url 'adicionar_pos' laboratorio.id %}{% endif %}"
+                            class="btn btn-sm btn-light m-2 {% if request.resolver_match.view_name == 'adicionar_pos' %}active{% endif %}">Programas de Pós-Graduação</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% if laboratorio.id %}{% url 'projetos' laboratorio_id=laboratorio.id %}{% endif %}"
+                            class="btn btn-sm btn-light m-2 {% if request.resolver_match.view_name == 'projetos' %}active{% endif %}">Projetos</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% if laboratorio.id %}{% url 'editar_regimentos_internos' laboratorio.id %}{% endif %}"
+                            class="btn btn-sm btn-light m-2 {% if request.resolver_match.view_name == 'editar_regimentos_internos' %}active{% endif %}">Anexos</a>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+

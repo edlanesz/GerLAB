@@ -1,0 +1,196 @@
+{% load static %}
+{% include 'parciais/head.html' %}
+{% include 'parciais/navbar.html' %}
+{% include 'parciais/ferramentas.html' %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-sm-12">
+            <div class="card rounded">
+                <div class="card-header">
+                    <h2 class="text-center">Membros do Laboratório</h2>
+                </div>
+
+                <div class="card-body m-2">
+                    {% if membros %}
+                    <ul class="list-group">
+                        {% for membro in membros %}
+                        <li class="list-group-item border rounded-0 p-2 mb-1">
+                            <p class="m-0 mt-1"><span class="card-title"> Nome do Membro:</span> {{ membro.nome_membro}}
+                            </p>
+                            <p class="m-0 mt-1"><span class="card-title"> Função:</span> {{ membro.funcao }}</p>
+                            <p class="m-0 mt-1"><span class="card-title"> Currículo Lattes:</span> <a
+                                    href="{{ membro.curriculo_lattes }}" target="_blank">{{membro.curriculo_lattes}}</a></p>
+
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-primary editar-membro"
+                                    data-bs-target="#modal-editar-membro" data-bs-toggle="modal">Editar</button>
+
+                                <form method="POST" action="{% url 'excluir_membro_laboratorio' membro.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+                                </form>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>Nenhum membro encontrado para este laboratório.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-12">
+            <div class="card rounded">
+                <div class="card-header">
+                    <h2 class="text-center">Adicionar Membro</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="row">
+
+
+
+                            <div class="col-12">
+                                <label class="fw-bold" for="novo_nome_membro">Nome do Membro</label>
+                                <input type="text" class="form-control shadow-sm" id="novo_nome_membro" name="nome_membro" required>
+                                <ul id="lista_sugestoes"></ul>
+                            </div>
+
+
+
+                            <div class="col-12">
+                                <label class="fw-bold mt-3" for="nova_funcao">Função</label>
+                                <select class="form-control shadow-sm" id="nova_funcao" name="funcao" required>
+                                    <option value="">Escolha uma função</option>
+                                    <option value="Técnico">Técnico</option>
+                                    <option value="Discente">Discente</option>
+                                    <option value="Docente">Docente</option>
+                                    <option value="Colaborador">Colaborador</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="fw-bold mt-3" for="novo_curriculo_lattes">Currículo Lattes (URL)</label>
+                                <input type="url" class="form-control shadow-sm" id="novo_curriculo_lattes"
+                                    name="curriculo_lattes">
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary mt-3" name="adicionar_membro">Adicionar
+                                    Membro</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% for membro in membros %}
+<div class="modal fade" id="modal-editar-membro" tabindex="-1" role="dialog"
+    aria-labelledby="editarMembroLabel{{ membro.id }}" aria-hidden="true">
+
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarMembroLabel{{ membro.id }}">Editar Membro do Laboratório</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulário de edição das informações do membro do laboratório -->
+                <form method="POST" action="{% url 'editar_membro_laboratorio' membro.id %}"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Campos para editar as informações do membro -->
+                    <div class="form-group">
+                        <label for="nome_membro{{ membro.id }}">Nome do Membro</label>
+                        <input type="text" class="form-control" id="nome_membro{{ membro.id }}" name="nome_membro"
+                            value="{{ membro.nome_membro }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="funcao{{ membro.id }}">Função</label>
+                        <select class="form-control" id="funcao{{ membro.id }}" name="funcao" required>
+                            <option value="Técnico" {% if membro.funcao == "Técnico" %}selected{% endif %}>Técnico
+                            </option>
+                            <option value="Discente" {% if membro.funcao == "Discente" %}selected{% endif %}>Discente
+                            </option>
+                            <option value="Docente" {% if membro.funcao == "Docente" %}selected{% endif %}>Docente
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="curriculo_lattes{{ membro.id }}">Currículo Lattes (URL)</label>
+                        <input type="url" class="form-control" id="curriculo_lattes{{ membro.id }}"
+                            name="curriculo_lattes" value="{{ membro.curriculo_lattes }}">
+                    </div>
+
+                    <!-- Botão para salvar as edições -->
+                    <button type="submit" class="btn btn-primary" name="salvar_edicao_membro">Salvar Edições</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% include 'parciais/footer.html'%}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $("#novo_nome_membro").on("input", function () {
+        var termo = $(this).val();
+
+        $.ajax({
+            url: "/buscar_nomes/",
+            type: "GET",
+            data: { term: termo },
+            dataType: "json",
+            success: function (result) {
+                // Limpa a lista de sugestões
+                $("#lista_sugestoes").empty();
+
+                // Verifica se há objetos na resposta
+                if (result && result.length > 0) {
+                    // Adiciona cada nome à lista
+                    result.forEach(function (obj) {
+                        // Verifica se as propriedades "label" e "value" estão presentes e não são undefined
+                        if (obj && obj.label !== undefined && obj.value !== undefined) {
+                            var li = $("<li>").text(obj.label).click(function () {
+                                // Preenche o campo de input com o nome clicado
+                                $("#novo_nome_membro").val(obj.label);
+                                // Limpa a lista de sugestões
+                                $("#lista_sugestoes").empty();
+                            });
+
+                            $("#lista_sugestoes").append(li);
+                        } else {
+                            console.error("Propriedades 'label' ou 'value' ausentes ou indefinidas no objeto:", obj);
+                        }
+                    });
+                } else {
+                    $("#lista_sugestoes").append("<li>Nenhum resultado encontrado</li>");
+                }
+            },
+            error: function (error) {
+                console.error("Erro na requisição AJAX", error);
+            }
+        });
+    });
+});
+
+
+</script>
+
+</body>
+
+</html>

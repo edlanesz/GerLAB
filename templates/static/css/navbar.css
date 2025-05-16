@@ -1,0 +1,145 @@
+.form-white.input-group>.form-control:focus {
+    border-color: #fff;
+    box-shadow: inset 0 0 0 1px #fff;
+  }
+  
+  .navbar-dark .navbar-nav .nav-link {
+    color: #fff;
+  }
+  
+  .navbar-dark .navbar-nav .nav-link:hover,
+  .navbar-dark .navbar-nav .nav-link:focus {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .logo-size {
+    padding: 2px;
+    width: 120px; 
+    height: 100px; 
+}
+
+.bg-rs {
+    background-color: var(--corPrimaria)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.navbar-2 {
+    background-color: var(--corPrimaria)
+}
+
+.navbar-2 .navbar-nav .nav-link {
+    color: #ffffff;
+}
+
+.navbar-2 .navbar-nav .nav-link:hover {
+    color: #fbc531
+}
+
+.navbar-2 .navbar-nav .active>.nav-link {
+    color: #a1a1a1
+}
+
+
+
+header .navbar-2 {
+    padding: 0;
+}
+
+.nav-link.active {
+    background-color: var(--corPrimaria);
+    color: #ff8800!important;
+}
+
+header .navbar-toggler {
+    border: none;
+}
+
+.navbar-2 {
+    height: 3.6rem;
+}
+
+.navbar-expand {
+    height: 1.9rem;
+
+}
+
+.logo_gov {
+    background-color: #135763;
+    height: 59px;
+    align-items: center;
+    z-index: 0;
+}
+
+.sub_gov {
+    height: 30px;
+}
+
+.div_gov{
+    width: 60%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    color: #FFF;
+}
+
+.link_gov {
+    display: flex;
+    align-items: center;
+    gap: .52rem;
+    font-size: 10px;
+    color: #ffffff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: Tahoma, Geneva, sans-serif;
+    margin-top: 20px;
+    border-left: 1px solid #ffff;
+}
+
+.link_gov a {
+    margin-left: 5px;
+}
+
+.logo-ouvidoria {
+    width: 15px;
+}
+
+.logo_estado {
+    width: 150px;
+}
+
+@media only screen and (max-width: 768px) {
+    .div_gov {
+        width: 90%;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .div_gov {
+      width: 90%;
+    }
+  }
+  
+  @media only screen and (max-width: 480px) {
+    /* Styles for screens less than 480px wide */
+    .sub_gov  {
+      width: 75%; /* Adjust image container width */
+    }
+    .link_gov {
+      font-size: 8px; /* Reduce font size for smaller screens */
+      gap: 0.25rem; /* Adjust gap between links */
+    }
+    .logo-ouvidoria {
+      width: 12px; /* Reduce icon size */
+    }
+  }

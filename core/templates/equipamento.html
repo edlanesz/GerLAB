@@ -1,0 +1,76 @@
+{% load static %}
+{% include 'parciais/head.html'%}
+<style>
+    .form-check-label {
+        margin-left: 10px;
+    }
+</style>
+{% include 'parciais/navbar.html'%}
+
+<body>
+
+    <form action="{% url 'salvar_equipamento' %}" method="POST">
+        {% csrf_token %}
+
+        <div class="container">
+            <div class="row justify-content-center p-4 ">
+
+                <section class=" rounded" id="formulario_autoridade">
+
+                    <div class="row gap-2">
+                        <h5 class="titulo">Equipamento</h5>
+
+
+                        <input class="form-control" placeholder="Qual equipamento?" name="equipamento">
+                        <input class="form-control" placeholder="Marca do equipamento" name="marca">
+                    
+                        <input class="form-control" placeholder="Modelo do equipamento" name="modelo">
+                        <input class="form-control" placeholder="Finalidade do equipamento" name="finalidade">
+                        
+
+
+
+                    <input class="form-control" type="file" id="formFile" placeholder="imagens do Laboratorio">
+
+                    <button id="" type="submit" class="btn btn-success float-right">
+                        Salvar
+                    </button>
+            </div>
+
+
+            </section>
+
+        </div>
+        </div>
+
+    </form>
+    {% include 'parciais/footer.html'%}
+    <script>
+        const regimentoCheckbox = document.getElementById('regimento_interno');
+        const copiaRegimentoInput = document.querySelector('[name="copia_do_regimento"]');
+
+        regimentoCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+                copiaRegimentoInput.style.display = 'block';
+            } else {
+                copiaRegimentoInput.style.display = 'none';
+            }
+        });
+    </script>
+
+    <script>
+        const temCadastroCheckbox = document.getElementById('tem_cadastro_pnipe');
+        const linkPNIPEContainer = document.getElementById('link_pnipe_container');
+        const linkPNIPETxtInput = linkPNIPEContainer.querySelector('[name="link_pnipe"]');
+
+        temCadastroCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+                linkPNIPEContainer.style.display = 'block';
+            } else {
+                linkPNIPEContainer.style.display = 'none';
+                linkPNIPETxtInput.value = ''; // Limpar o campo de link quando ocultado
+            }
+        });
+    </script>
+</body>
+{% include 'parciais/footer.html'%}

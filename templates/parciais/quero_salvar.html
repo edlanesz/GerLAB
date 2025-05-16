@@ -1,0 +1,107 @@
+<!-- Modal com os campos de infraestrutura -->
+<div class="modal fade" id="modal_infraestrutura" tabindex="-1" aria-labelledby="modal_infraestrutura_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal_infraestrutura_label">Infraestrutura</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Campos da infraestrutura -->
+                <select class="form-select mb-2" name="equipamento">
+                    <option value="" disabled selected>Selecione um equipamento</option>
+                    {% for equipamento in equipamentos %}
+                        <option value="{{ equipamento.id }}">{{ equipamento.nome_equipamento }}</option>
+                    {% endfor %}
+                </select>
+                <select class="form-select mb-2" name="marca">
+                    <option value="" disabled selected>Selecione uma marca</option>
+                    {% for marca in marcas %}
+                        <option value="{{ marca.id }}">{{ marca.nome_marca }}</option>
+                    {% endfor %}
+                </select>
+                <input class="form-control mb-2" placeholder="Modelo" name="modelo">
+                <input class="form-control mb-2" placeholder="Finalidade" name="finalidade">
+            </div>
+            <div class="modal-footer">
+                <button id="botao_salvar" type="button" class="btn btn-primary" disabled>Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="d-flex p-0 gap-4">
+                            
+    <input class="form-control" placeholder="Unidade" name="unidade">
+    <input class="form-control" placeholder="Rua" name="rua">
+    <input class="form-control" placeholder="Número do predio" name="numero_rua">
+    <input class="form-control" placeholder="CEP" name="cep">
+    <input class="form-control" placeholder="Bairro" name="bairro">
+</div>
+
+
+<!-- anexos -->
+
+<input class="form-check-input" type="checkbox" value="tem_cadastro_pnipe"
+name="tem_cadastro_pnipe" id="tem_cadastro_pnipe">
+<label class="form-check-label" for="tem_cadastro_pnipe">
+Tem cadastro no PNIPe?
+</label>
+</div>
+<div id="link_pnipe_container" style="display: none;">
+<input class="form-control" placeholder="Link do PNIPe" name="link_pnipe">
+</div>
+<input type="file" name="imagens_lab[]" multiple accept="image/*" id="imagens_lab_input"
+style="display: none;">
+<label for="imagens_lab_input" class="form-control">Selecione imagens...</label>
+
+
+
+<label for="ato_anexo_input" class="form-control">Selecione um arquivo de ato anexo...</label>
+<input type="file" name="ato_anexo" id="ato_anexo_input" style="display: none;">
+<input class="form-control" placeholder="Conselho" name="conselho">
+
+
+<script>
+    const temCadastroCheckbox = document.getElementById('tem_cadastro_pnipe');
+    const linkPNIPEContainer = document.getElementById('link_pnipe_container');
+    const linkPNIPETxtInput = linkPNIPEContainer.querySelector('[name="link_pnipe"]');
+
+    temCadastroCheckbox.addEventListener('change', function () {
+        if (this.checked) {
+            linkPNIPEContainer.style.display = 'block';
+        } else {
+            linkPNIPEContainer.style.display = 'none';
+            linkPNIPETxtInput.value = ''; // Limpar o campo de link quando ocultado
+        }
+    });
+</script>
+
+<script>
+    const regimentoCheckbox = document.getElementById('regimento_interno');
+    const copiaRegimentoInput = document.querySelector('[name="copia_do_regimento"]');
+
+    regimentoCheckbox.addEventListener('change', function () {
+        if (this.checked) {
+            copiaRegimentoInput.style.display = 'block';
+        } else {
+            copiaRegimentoInput.style.display = 'none';
+        }
+    });
+</script>
+
+<script>
+    const temCadastroCheckbox = document.getElementById('tem_cadastro_pnipe');
+    const linkPNIPEContainer = document.getElementById('link_pnipe_container');
+    const linkPNIPETxtInput = linkPNIPEContainer.querySelector('[name="link_pnipe"]');
+
+    temCadastroCheckbox.addEventListener('change', function () {
+        if (this.checked) {
+            linkPNIPEContainer.style.display = 'block';
+        } else {
+            linkPNIPEContainer.style.display = 'none';
+            linkPNIPETxtInput.value = ''; // Limpar o campo de link quando ocultado
+        }
+    });
+</script>

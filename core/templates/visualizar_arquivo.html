@@ -1,0 +1,18 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visualizar Arquivo</title>
+</head>
+<body>
+
+<h1>Visualizar Arquivo</h1>
+
+{% if regimento.pdf %}
+    <p><a href="{% url 'visualizar_pdf' regimento_id=regimento.id %}" target="_blank">Visualizar PDF</a></p>
+{% else %}
+    <p>Nenhum PDF disponível para visualização.</p>
+{% endif %}
+</body>
+</html>

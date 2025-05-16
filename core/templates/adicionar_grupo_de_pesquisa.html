@@ -1,0 +1,149 @@
+{% load static %}
+{% include 'parciais/head.html' %}
+{% include 'parciais/navbar.html' %}
+{% include 'parciais/ferramentas.html' %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-sm-12">
+            <div class="card rounded">
+                <div class="card-header">
+                    <h2 class="text-center">Informações de Grupos de Pesquisa</h2>
+                </div>
+
+                <div class="card-body m-2">
+                    {% if grupos_de_pesquisa %}
+                    <ul class="list-group">
+                        {% for grupo_de_pesquisa in grupos_de_pesquisa %}
+                        <li class="list-group-item border rounded-0 p-2 mb-1">
+                            <div class="grupo-de-pesquisa-details">
+                                <p class="m-0 mt-1"><span class="card-title"> Nome do Grupo de
+                                        Pesquisa</span>: {{ grupo_de_pesquisa.nome_do_grupo }}</p>
+                                <p class="m-0 mt-1"><span class="card-title"> Área</span>: {{grupo_de_pesquisa.area }}
+                                </p>
+                                <p class="m-0 mt-1"><span class="card-title"> Link do Grupo de
+                                        Pesquisa</span>: <a href="{{ grupo_de_pesquisa.link_grupo }}"
+                                        target="_blank">{{grupo_de_pesquisa.link_grupo }}</a></p>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-primary editar-grupo" data-bs-toggle="modal"
+                                    data-bs-target="#editarGrupo{{ grupo_de_pesquisa.id }}">Editar</button>
+
+                                <form method="POST" action="{% url 'excluir_grupo_de_pesquisa' grupo_de_pesquisa.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+                                </form>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="fst-italic">Nenhum grupo de pesquisa encontrado para este laboratório!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-12">
+            <div class="card rounded">
+
+                <div class="card-header">
+                    <h2 class="h4 text-center">Adicionar Novo Grupo de Pesquisa</h2>
+                </div>
+
+                <div class="card-body p-2">
+                    <form method="POST" action="{{ editar_grupo_de_pesquisa }}" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="fw-bold mt-3" for="nome_do_grupo">Nome do Grupo de
+                                    Pesquisa</label>
+                                <input type="text" class="shadow-sm form-control" id="nome_do_grupo"
+                                    name="nome_do_grupo" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="fw-bold mt-3" for="area">Área</label>
+                                <select class="shadow-sm form-control" id="area" name="area" required>
+                                    <option value="" selected disabled hidden>Selecione a Área</option>
+                                    <option value="Ciências Agrárias">Ciências Agrárias</option>
+                                    <option value="Ciências Biológicas">Ciências Biológicas</option>
+                                    <option value="Ciências da Saúde">Ciências da Saúde</option>
+                                    <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
+                                    <option value="Engenharias">Engenharias</option>
+                                    <option value="Ciências Humanas">Ciências Humanas</option>
+                                    <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
+                                    <option value="Lingüística, Letras e Artes">Lingüística, Letras e Artes</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="fw-bold mt-3" for="link_grupo">Link do Grupo de Pesquisa</label>
+                                <input type="text" class="shadow-sm form-control" id="link_grupo" name="link_grupo"
+                                    required>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary mt-3"
+                                    name="salvar_grupo_de_pesquisa">Adicionar
+                                    Grupo de Pesquisa</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for grupo_de_pesquisa in grupos_de_pesquisa %}
+<div class="modal fade" id="editarGrupo{{ grupo_de_pesquisa.id }}" tabindex="-1" role="dialog"
+    aria-labelledby="editarGrupoLabel{{ grupo_de_pesquisa.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarGrupoLabel{{ grupo_de_pesquisa.id }}">Editar Grupo de Pesquisa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'editar_grupo_de_pesquisa' grupo_de_pesquisa.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="grupo_de_pesquisa_id" value="{{ grupo_de_pesquisa.id }}">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="fw-bold" for="nome_do_grupo{{ grupo_de_pesquisa.id }}">Nome do Grupo de Pesquisa</label>
+                            <input type="text" class="form-control shadow-sm" id="nome_do_grupo{{ grupo_de_pesquisa.id }}" name="nome_do_grupo" value="{{ grupo_de_pesquisa.nome_do_grupo }}" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="mt-3 fw-bold" for="area{{ grupo_de_pesquisa.id }}">Área</label>
+                            <select class="form-control shadow-sm" id="area{{ grupo_de_pesquisa.id }}" name="area" required>
+                                <option value="Ciências Agrárias" {% if grupo_de_pesquisa.area == 'Ciências Agrárias' %}selected{% endif %}>Ciências Agrárias</option>
+                                <option value="Ciências Biológicas" {% if grupo_de_pesquisa.area == 'Ciências Biológicas' %}selected{% endif %}>Ciências Biológicas</option>
+                                <option value="Ciências da Saúde" {% if grupo_de_pesquisa.area == 'Ciências da Saúde' %}selected{% endif %}>Ciências da Saúde</option>
+                                <option value="Ciências Exatas e da Terra" {% if grupo_de_pesquisa.area == 'Ciências Exatas e da Terra' %}selected{% endif %}>Ciências Exatas e da Terra</option>
+                                <option value="Engenharias" {% if grupo_de_pesquisa.area == 'Engenharias' %}selected{% endif %}>Engenharias</option>
+                                <option value="Ciências Humanas" {% if grupo_de_pesquisa.area == 'Ciências Humanas' %}selected{% endif %}>Ciências Humanas</option>
+                                <option value="Ciências Sociais Aplicadas" {% if grupo_de_pesquisa.area == 'Ciências Sociais Aplicadas' %}selected{% endif %}>Ciências Sociais Aplicadas</option>
+                                <option value="Lingüística, Letras e Artes" {% if grupo_de_pesquisa.area == 'Lingüística, Letras e Artes' %}selected{% endif %}>Lingüística, Letras e Artes</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="mt-3 fw-bold" for="link_grupo{{ grupo_de_pesquisa.id }}">Link do Grupo de Pesquisa</label>
+                            <input type="text" class="form-control shadow-sm" id="link_grupo{{ grupo_de_pesquisa.id }}" name="link_grupo" value="{{ grupo_de_pesquisa.link_grupo }}" required>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary mt-3" name="salvar_edicao_grupo_de_pesquisa">Salvar Edições</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+</div>
+{% include 'parciais/footer.html'%}

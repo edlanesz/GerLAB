@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 50%; 
+            border-collapse: collapse;
+            font-size: 8px; /* Diminuindo o tamanho da fonte da tabela */
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 2px; /* Diminuindo o padding das células */
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        /* Opção 1: Aumentar a altura máxima da coluna Equipamento */
+        td.equipamento {
+            max-height: 400px; /* Aumente o valor conforme necessário */
+        }
+        
+        /* Opção 2: Quebra de página dentro da lista de equipamentos */
+        .equipamento-quebra-pagina {
+            page-break-before: always;
+        }
+        
+        /* Opção 3: Exibir conteúdo em nova página (requer manipulação de HTML e WeasyPrint) */
+        /* ... */
+        
+        /* Opção 4: Ajustar layout da tabela */
+        /* ... */
+    </style>
+</head>
+<body>
+    <h1>Relatório de Laboratórios</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nome do Laboratório</th>
+                    <th>Responsável</th>
+                    <th>Equipamento</th>
+                    <th>Unidade</th>
+                    <th>Descrição</th>
+                    <th>Parcerias e Fomentos</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for laboratorio in laboratorios %}
+                <tr>
+                    <td>{{ laboratorio.nome_laboratorio }}</td>
+                    <td>{{ laboratorio.responsavel }}</td>
+                    <td>
+                        <div class="equipamento">
+                            <ul>
+                                {% for infraestrutura in laboratorio.infraestrutura_set.all %}
+                                <li>{{ infraestrutura.equipamento.nome_equipamento }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </td>
+                    <td>
+                        {{ laboratorio.unidade|default:"Por favor preencha os dados de unidade." }}
+                    </td>
+                    <td>
+                        {{ laboratorio.descricao|default:"Sem descrição no momento." }}
+                    </td>
+                    <td>
+                        <ul>
+                            {% for formento in laboratorio.Formentos.all %}
+                            <li>{{ formento.nomedoparceito }}</li>
+                            {% empty %}
+                            <li>Sem formentos registrados.</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for formento in laboratorio.Formentos.all %}
+                            <li>{{ formento.tipo }}</li>
+                            {% empty %}
+                            <li>Sem formentos registrados.</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+    </div>
+</body>
+</html>

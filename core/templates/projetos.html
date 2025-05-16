@@ -1,0 +1,312 @@
+{% load static %}
+{% include 'parciais/head.html' %}
+{% include 'parciais/navbar.html' %}
+{% include 'parciais/ferramentas.html' %}
+
+<div class="container">
+
+   <div class="row">
+      <div class="col-md-8 col-sm-12">
+         <div class="card rounded">
+            <div class="card-header">
+               <h2 class="text-center">Formulário de Projeto de Pesquisa</h2>
+            </div>
+
+            <div class="card-body">
+               <form method="post" enctype="multipart/form-data" class="row">
+                  {% csrf_token %}
+
+                  <div class="col-12">
+                     <label for="{{ form.projeto.id_for_label }}" class="mt-3 fw-bold">Cadastro no SISPROJ:</label>
+                     <input type="text" id="{{ form.projeto.id_for_label }}" name="{{ form.projeto.name }}"
+                        class="form-control shadow-sm" onchange="obterDetalhesDoProjeto()" list="projetos-sugestoes">
+                     <datalist id="projetos-sugestoes">
+                        {% for resultado in resultados %}
+                        <option value="{{ resultado.0 }}">
+                           {% endfor %}
+                     </datalist>
+                  </div>
+
+                  <div class="col-md-6 col-sm-12">
+                     <label for="{{ form.nome_projeto.id_for_label }}" class="mt-3 fw-bold">Nome do Projeto de
+                        Pesquisa:</label>
+                     <input type="text" id="{{ form.nome_projeto.id_for_label }}" name="{{ form.nome_projeto.name }}"
+                        class="form-control shadow-sm" style="width: 100%;">
+                  </div>
+
+                  <div class="col-md-6 col-sm-12">
+                     <label for="{{ form.docente_responsavel.id_for_label }}" class="mt-3 fw-bold">
+                        Responsável:</label>
+                     <input type="text" id="{{ form.docente_responsavel.id_for_label }}"
+                        name="{{ form.docente_responsavel.name }}" class="form-control shadow-sm">
+                  </div>
+
+
+                  <div class="col-md-6 col-sm-12">
+                     <label for="{{ form.fomento.id_for_label }}" class="mt-3 fw-bold">Fomento:</label>
+                     {% if fomento_projeto == 'Fomento não encontrado no banco de dados.' %}
+                     <p>{{ fomento_projeto }}</p>
+                     {% else %}
+                     <input type="text" id="{{ form.fomento.id_for_label }}" name="{{ form.fomento.name }}"
+                        class="form-control shadow-sm" value="{{ fomento_projeto }}" >
+                     {% endif %}
+                  </div>
+
+                  <div class="col-md-6 col-sm-12">
+                     <label for="{{ form.modalidade.id_for_label }}" class="mt-3 fw-bold">Modalidade:</label>
+                     <input type="text" id="{{ form.modalidade.id_for_label }}" name="{{ form.modalidade.name }}"
+                        class="form-control shadow-sm">
+                  </div>
+
+                  <div class="col-md-6 col-sm-12">
+                     <label for="{{ form.vigencia_inicio.id_for_label }}" class="mt-3 fw-bold">Vigência (Data de
+                        Início):</label>
+                     <input type="date" class="form-control shadow-sm" id="{{ form.vigencia_inicio.id_for_label }}"
+                        name="{{ form.vigencia_inicio.name }}" value="{{ form.vigencia_inicio.value }}" required>
+                  </div>
+
+                  <div class="col-md-6 col-sm-12">
+                     <label for="{{ form.vigencia_fim.id_for_label }}" class="mt-3 fw-bold">Vigência (Data de
+                        Fim):</label>
+                     <input type="date" class="form-control shadow-sm" id="{{ form.vigencia_fim.id_for_label }}"
+                        name="{{ form.vigencia_fim.name }}" value="{{ form.vigencia_fim.value }}" required>
+                  </div>
+
+
+
+              <div class="col-12">
+    <label class="mt-3 fw-bold">Participantes:</label>
+    <div id="discentes-container">
+        <!-- Aqui serão adicionados os campos de discente e matrícula dinamicamente -->
+    </div>
+    <button type="button" class="btn btn-primary mt-3" onclick="adicionarDiscente()">Adicionar Participante</button>
+    <input type="hidden" id="discentes-input" name="discentes" value="">
+</div>
+
+
+<input type="hidden" name="laboratorio" value="{{ laboratorio.id }}">
+
+
+
+                  <div class="col-12">
+                     <button type="submit" class="mt-3 btn btn-primary">Enviar</button>
+                  </div>
+
+                  {% if form.errors %}
+                  <div class="alert alert-danger mt-3"><strong>Erro no formulário:</strong> {{ form.errors }} </div>
+                  {% endif %}
+               </form>
+            </div>
+         </div>
+      </div>
+
+
+
+<div class="col-md-4 col-sm-12">
+    <div class="card rounded">
+        <div class="card-header">
+            <h2 class="text-center">Projetos Salvos</h2>
+        </div>
+
+        <div class="card-body">
+            <ul class="list-group mt-4">
+                {% for projeto in projetos %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div class="cursor-pointer" onclick="toggleDetails('{{ projeto.id }}')">
+                            {{ projeto.nome_projeto }}
+                        </div>
+                        <button id="toggleButton{{ projeto.id }}" class="btn btn-light btn-sm" onclick="toggleDetails('{{ projeto.id }}')">
+                            <i class="bi bi-caret-down"></i>
+                        </button>
+                    </div>
+                    <!-- Detalhes do projeto -->
+                    <div id="details{{ projeto.id }}" class="details" style="display: none;">
+                        <p><strong>Docente Responsável:</strong> {{ projeto.docente_responsavel }}</p>
+                        <p><strong>Modalidade:</strong> {{ projeto.modalidade }}</p>
+                        <p><strong>Vigência:</strong> {{ projeto.vigencia_inicio }} - {{ projeto.vigencia_fim }}</p>
+                        <p><strong>Fomento:</strong> {{ projeto.fomento }}</p>
+                         <p><strong>Participantes:</strong></p>
+                            <ul>
+                                {% for discente in projeto.get_discentes_list %}
+                                    <li>{{ discente }}</li>
+                                {% endfor %}
+                            </ul>
+                            <a href="{% url 'editar_projeto' projeto.id %}" class="btn btn-primary btn-sm float-end">Editar</a>
+                        <a href="#" class="btn btn-danger btn-sm float-end" data-bs-toggle="modal"
+                            data-bs-target="#confirmarExclusao{{ projeto.id }}">Excluir</a>
+                    </div>
+                    <div class="modal fade" id="confirmarExclusao{{ projeto.id }}" tabindex="-1"
+                        aria-labelledby="modalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalLabel">Tem certeza que deseja excluir?</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Fechar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Você está prestes a excluir o projeto "{{ projeto.nome_projeto }}".</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancelar</button>
+                                    <a href="{% url 'excluir_projeto' projeto.id %}" class="btn btn-danger">Excluir</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+   </div>
+</div>
+{% include 'parciais/footer.html'%}
+<script>
+
+   console.log('RODOU');
+
+   document.addEventListener("DOMContentLoaded", function () {
+      // Adicione aqui os campos restantes do formulário
+   });
+
+   function toggleDetails(projectId) {
+      const details = document.getElementById('details' + projectId);
+      details.style.display = details.style.display === 'none' ? 'block' : 'none';
+   }
+
+   function obterDetalhesDoProjeto() {
+      var projetoInput = document.getElementById('{{ form.projeto.id_for_label }}');
+      var projetoSelecionado = projetoInput.value;
+
+      if (projetoSelecionado.trim() !== '') {
+         // Consulta AJAX para obter detalhes do projeto
+         $.ajax({
+            url: '/obter_detalhes_projeto/',
+            data: { 'projeto': projetoSelecionado },
+            dataType: 'json',
+            success: function (data) {
+
+               console.log('Dados do projeto:', data);
+
+               // Atualiza os campos com os detalhes do projeto obtidos
+                document.getElementById('{{ form.docente_responsavel.id_for_label }}').value = data.nome_completo_autor;
+
+               // Verifica se o nome do projeto foi retornado
+               if (data.nome_projeto) {
+                  document.getElementById('{{ form.nome_projeto.id_for_label }}').value = data.nome_projeto;
+               }
+
+               // Adiciona a modalidade ao campo correspondente
+               var modalidadeInput = document.getElementById('{{ form.modalidade.id_for_label }}');
+               modalidadeInput.value = data.modalidade_projeto;
+
+               // Atualiza o campo de fomento
+               var fomentoInput = $('#{{ form.fomento.id_for_label }}');
+               fomentoInput.val(data.fomento_projeto.toString());
+
+               document.getElementById('{{ form.matricula_discente.id_for_label }}').value = data.matricula_discente;
+
+
+               // Atualiza outros campos conforme necessário
+            },
+            error: function (xhr, status, error) {
+               console.error('Erro na chamada AJAX (detalhes):', error);
+            }
+         });
+
+         $.ajax({
+            url: '/obter_vigencia_projeto/',
+            data: { 'projeto': projetoSelecionado },
+            dataType: 'json',
+            success: function (vigenciaData) {
+               document.getElementById('{{ form.vigencia_inicio.id_for_label }}').value = vigenciaData.vigencia_inicio;
+               document.getElementById('{{ form.vigencia_fim.id_for_label }}').value = vigenciaData.vigencia_fim;
+            },
+            error: function (xhr, status, error) {
+               console.error('Erro de requisição (vigência):', error);
+            }
+         });
+
+      }
+   }
+
+   function toggleDetails(projetoId) {
+        const details = document.getElementById('details' + projetoId);
+        const toggleButton = document.getElementById('toggleButton' + projetoId);
+
+        if (details.style.display === 'none') {
+            details.style.display = 'block';
+            toggleButton.innerHTML = '<i class="bi bi-caret-up"></i>';
+        } else {
+            details.style.display = 'none';
+            toggleButton.innerHTML = '<i class="bi bi-caret-down"></i>';
+        }
+    }
+
+     function adicionarDiscente() {
+    var container = document.getElementById("discentes-container");
+    var discenteField = document.createElement("input");
+    discenteField.type = "text";
+    discenteField.className = "form-control shadow-sm mt-2";
+    discenteField.placeholder = "Nome do discente";
+    discenteField.name = "discentes"; // Define o nome do campo para ser enviado ao backend
+
+    var matriculaField = document.createElement("input");
+    matriculaField.type = "text";
+    matriculaField.className = "form-control shadow-sm mt-2";
+    matriculaField.placeholder = "Função";
+    matriculaField.name = "matriculas"; // Define o nome do campo para ser enviado ao backend
+
+    var closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "btn btn-danger mt-2";
+    closeButton.innerText = "-";
+    closeButton.onclick = removerDiscente;
+
+    var divWrapper = document.createElement("div");
+    divWrapper.appendChild(discenteField);
+    divWrapper.appendChild(matriculaField);
+    divWrapper.appendChild(closeButton);
+
+    container.appendChild(divWrapper);
+}
+
+
+// Função para atualizar o valor do campo discentes-input antes de enviar o formulário
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector('form').addEventListener('submit', function () {
+        var discentesInputs = document.querySelectorAll('input[name="discentes"]');
+        var matriculasInputs = document.querySelectorAll('input[name="matriculas"]');
+        var discentesValues = [];
+        var matriculasValues = [];
+
+        discentesInputs.forEach(function (input) {
+            discentesValues.push(input.value);
+        });
+
+        matriculasInputs.forEach(function (input) {
+            matriculasValues.push(input.value);
+        });
+
+        document.getElementById("discentes-input").value = discentesValues.join('\n');
+    });
+});
+
+
+   function removerDiscente(event) {
+    event.target.parentNode.remove(); // Remove o pai do botão (que contém os campos de discente e matrícula)
+}
+
+
+
+
+
+
+</script>

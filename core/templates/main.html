@@ -1,0 +1,340 @@
+{% load static %}
+<html lang="pt-br">
+
+{% include 'parciais/head.html' %}
+{% include 'parciais/navbar.html'%}
+
+
+<style>
+    .text-justify {
+        text-align: justify-all; 
+        font-family: Arial, sans-serif; /* Define a fonte como Arial e, se não disponível, uma fonte sans-serif padrão */
+        font-size: 15px; /* Define o tamanho da letra como 12 pixels */
+    }
+    .redirecionamento {
+  text-decoration: none;
+  color: #1b1b1b;
+}
+</style>
+
+<div class="container mt-4">
+
+    <div class="row justify-content-between a my-3 bg-sucess teste21  ">
+        <h1 class="h2 text-align-center teste22 ">Gereciamento de Laboratórios</h1>
+        </h1>
+    </div>
+
+     <div  id="background">
+        
+    </div>
+
+    <div class="mb-4 p-2">
+
+        <h4 class="border-bottom">Sobre a iniciativa</h4>
+
+        <div class="row">
+
+            <div class="col-7">
+            <p class="lead" style="text-align: justify;">{{ texto.texto_ajustavel }}</p>
+
+            {% if is_admin%}
+            <button type=" button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal"
+                    data-bs-target="#modalEditarTexto">
+                    Editar Texto <i class="bi bi-pencil"></i>
+                    </button>
+                    {% endif %}
+            </div>
+
+            <div class="col-5 text-end">
+                <img src="{% static 'images/microzinho.png' %}" alt="Imagem logo do Campus Lab" class="img-fluid dna" style="height: 11em;">
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="info-lab  w-100 d-flex justify-content-around">
+        <div class="p-2" id="counter">
+            <h5 class="h5-s">Laboratórios</h5>
+            <h4>{{lab_count}}</h4>
+        </div>
+        <div class="p-2 " id="counter">
+            <h5 class="h5-s">Equipamentos</h5>
+            <h4>{{infra_count}}</h4>
+        </div>
+    </div>
+
+    <div class="mt-4">
+
+        <div class="d-flex justify-content-between border-bottom py-2">
+
+            <h4 class="m-0">Laboratórios Disponíveis</h4>
+
+            <button type="button" class="btn btn-warning btn-sm " data-bs-toggle="modal"
+                >
+                <a class="redirecionamento" href="{% url 'relatorio_na_tela' %}"> 
+                    Relatório
+                </a>
+            </button>
+        </div>
+
+
+        <span>Resultados Encontrados: {{num}}</span>
+
+     <div class="my-4">
+    {% for laboratorio in laboratorios %}
+    <div class="card mb-4 shadow">
+        <div class="card-body p-0 ">
+
+            <a href="{% url 'visualizar_laboratorio' laboratorio_id=laboratorio.id %}" class="text-dark card">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="{{ laboratorio.imagens.last.imagem.url }}" class="img-fluid"
+                            alt="Imagem do Laboratório">
+                    </div>
+                    <div class="col-md-7">
+                        <h3> {{laboratorio.nome_laboratorio }}</h3>
+                            <p class="text-justify" style="text-align: justify; overflow: hidden; text-overflow: ellipsis;">{{ laboratorio.descricao }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="card-footer">
+            <div class="media d-flex gap-1 mb-3">
+                <i class="fas fa-user"></i>
+                <div class="media-body ml-2">
+                    <h6 class="my-0 text-dark d-block">{{ laboratorio.responsavel }}</h6>
+                </div>
+            </div>
+
+            <div class="media  d-flex gap-1">
+                <i class="fas fa-map-marker-alt"></i>
+                <div class="media-body ml-2">
+                    <small>{{ laboratorio.unidade|default_if_none:'' }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-end mt-2">
+        {% if laboratorios.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1" tabindex="-1" aria-disabled="true">&laquo; primeira</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ laboratorios.previous_page_number }}">anterior</a>
+        </li>
+        {% endif %}
+        {% for page_num in laboratorios.paginator.page_range %}
+            {% if page_num > laboratorios.number|add:'-5' and page_num < laboratorios.number|add:'5' %}
+                <li class="page-item {% if page_num == laboratorios.number %}active{% endif %}">
+                    <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        {% if laboratorios.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ laboratorios.next_page_number }}">próxima</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ laboratorios.paginator.num_pages }}" aria-disabled="true">última &raquo;</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+    </div>
+
+    <div class="modal fade" id="exampleModal_export" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Exportar Laboratórios</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{% url 'export_to_excel' %}">
+                        {% csrf_token %}
+
+                        <div class="accordion" id="accordionExample">
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Unidades
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                    data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        {% for laboratorio in laboratorios %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="unidade"
+                                                value="{{ laboratorio.unidade }}" id="unidade_{{ laboratorio.id }}">
+                                            <label class="form-check-label" for="unidade_{{ laboratorio.id }}">
+                                                {{laboratorio.unidade }}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseThree" aria-expanded="false"
+                                        aria-controls="collapseThree">
+                                        Laboratórios por Unidade
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse"
+                                    aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body wrapper">
+                                        {% for laboratorio in laboratorios %}
+                                        <a class="dropdown-toggle text-dark" data-bs-toggle="collapse"
+                                            href="#collapseExample_{{laboratorio.id}}" role="button"
+                                            aria-expanded="false" aria-controls="collapseExample_{{laboratorio.id}}"
+                                            style="text-decoration:none">
+                                            {{laboratorio.unidade}}
+                                        </a>
+                                        <br>
+                                        <div class="collapse" id="collapseExample_{{laboratorio.id}}">
+                                            <div class="card-body">
+                                                {% for lab_item in laboratorios%}
+                                                {% if lab_item.unidade == laboratorio.unidade %}
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="laboratorios"
+                                                        value="{{ laboratorio.id }}" id="laboratorio_{{ lab_item.id }}">
+                                                    <label class="form-check-label"
+                                                        for="laboratorio_{{ laboratorio.id }}">
+                                                        {{laboratorio.nome_laboratorio }}</label>
+                                                </div>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <p class="p-2">
+                        <input class="form-check-input" type="checkbox" name="export_all" id="export_all" value="1">
+                        <label class="form-check-label" for="export_all">Todos Laboratórios</label>
+                    </p>
+
+                    <button type="submit" class="btn btn-secondary">Exportar</button>
+                </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEditarTexto" tabindex="-1" role="dialog" aria-labelledby="modalEditarTextoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditarTextoLabel">Editar Texto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'texto_ajustavel' %}">
+                        {% csrf_token %}
+                        <textarea name="texto_ajustavel" class="form-control"
+                            rows="4">{{ texto.texto_ajustavel }}</textarea>
+                        <button type="submit" class="btn btn-primary mt-2">Salvar Alterações</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% include 'parciais/footer.html'%}
+<style>
+
+
+    .info-lab {
+        background-image: url('{% static "images/microgrande.png" %}');
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        color: #fff;
+        /* Adicione uma cor de texto adequada para garantir a legibilidade */
+        border-radius: 5px;
+        margin-bottom: 2px;
+        height: 80px;
+
+    }
+    
+   #background {
+    background-image: url('{% static "images/microgrande.png" %}');
+    background-position: center;
+    background-size: cover; /* Alterado para cover */
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 50%;
+    /* Outras propriedades de estilo conforme necessário */
+}
+
+    .dna{
+       margin-right: 22%; 
+    }
+
+    .h5-s {
+        color: #fff;
+        /* Adicione uma cor de texto adequada para garantir a legibilidade */
+
+    }
+
+    #counter {
+        background-color:rgb(199, 8, 8);
+        /* Substitua o caminho pela localização real da sua imagem */
+        align-items: center;
+        text-align: center;
+        color: #fff;
+        /* Adicione uma cor de texto adequada para garantir a legibilidade */
+        border-radius: 5px;
+        opacity: 0.9;
+        height: 70px;
+
+    }
+</style>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.7.3/dist/js/bootstrap.min.js"></script>
+
+<script>
+    filter = document.querySelector('#filter')
+    form = document.querySelector('#form')
+    filter.addEventListener("change", () => form.submit());
+</script>
+
+<script>
+    var modalEditarTexto = new bootstrap.Modal(document.getElementById('modalEditarTexto'));
+
+    $('#modalEditarTexto').on('hidden.bs.modal', function () {
+        // Limpar o formulário ao fechar o modal
+        $(this).find('form')[0].reset();
+    });
+</script>
+
+<style>
+    body {
+        overflow-x: hidden; /* Impede a rolagem horizontal */
+    }
+</style>

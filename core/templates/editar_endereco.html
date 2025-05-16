@@ -1,0 +1,120 @@
+{% load static %} 
+{% include 'parciais/head.html' %} 
+{% include 'parciais/navbar.html' %} 
+{% include 'parciais/ferramentas.html' %}
+
+<div class="container">
+  {% if messages %}
+  <div class="alert alert-success">
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="card rounded">
+    <div class="card-header">
+      <h2 class="text-center">Endereço</h2>
+    </div>
+    <div class="card-body">
+      <form
+        action="{% url 'editar_endereco' laboratorio_id=laboratorio.id %}"
+        id="formulario_autoridade"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+
+        <div class="row">
+          <div class="mb-2 col-md-6 col-sm-12">
+            <label class="fw-bold" for="novo_nome_membro"
+              >Unidade acadêmica</label
+            >
+
+            <select class="form-control" name="unidade">
+              {% if laboratorio.unidade %}
+                  <option value="{{ laboratorio.unidade }}" selected>{{ laboratorio.unidade }}</option>
+              {% else %}
+                  <option value="" selected disabled hidden>Selecione a Unidade</option>
+              {% endif %}
+              {% for u in unidade %}
+                  <option value="{{ u.1 }}">{{ u.1 }}</option>
+              {% endfor %}
+          </select>
+          </div>
+
+          <div class="mb-2 col-md-6 col-sm-12">
+            <label class="fw-bold" for="novo_nome_membro">Local de Funcionamento</label>
+            <input
+              class="form-control"
+              name="funcionamento"
+              
+              value="{% if laboratorio.funcionamento %}{{ laboratorio.funcionamento}}{% endif %}"
+            />
+          </div>
+          <div class="mb-2 col-md-6 col-sm-12">
+            <label class="fw-bold" for="novo_nome_membro">Andar</label>
+            <input
+              class="form-control"
+              name="andar"
+              value="{% if laboratorio.andar %}{{ laboratorio.andar }}{% endif %}"
+            />
+          </div>
+          <div class="mb-2 col-md-6 col-sm-12">
+            <label class="fw-bold" for="novo_nome_membro">Sala</label>
+            <input
+              class="form-control"
+              name="sala"
+              value="{% if laboratorio.sala %}{{ laboratorio.sala }}{% endif %}"
+            />
+          </div>
+          <div class="mb-2 col-md-6 col-sm-12">
+            <label class="fw-bold" for="novo_nome_membro">Rua</label>
+            <input
+              class="form-control"
+              name="rua"
+              value="{% if laboratorio.rua %}{{ laboratorio.rua }}{% endif %}"
+            />
+          </div>
+          <div class="mb-2 col-md-6 col-sm-12">
+            <label class="fw-bold" for="novo_nome_membro">Número da rua</label>
+            <input
+              class="form-control"
+              name="numero_rua"
+              value="{% if laboratorio.numero_rua %}{{ laboratorio.numero_rua }}{% endif %}"
+            />
+          </div>
+          <div class="mb-2 col-md-6 col-sm-12">
+            <label class="fw-bold" for="novo_nome_membro">CEP</label>
+            <input
+              class="form-control"
+              name="cep"
+              value="{% if laboratorio.cep %}{{ laboratorio.cep }}{% endif %}"
+            />
+          </div>
+          <div class="mb-2 col-md-6 col-sm-12">
+            <label class="fw-bold" for="novo_nome_membro">Bairro</label>
+            <input
+              class="form-control"
+              name="bairro"
+              value="{% if laboratorio.bairro %}{{ laboratorio.bairro }}{% endif %}"
+            />
+          </div>
+
+          <div class="col-sm-12">
+            <button
+              id="botao_proximo_endereco"
+              type="submit"
+              class="btn btn-success float-right"
+            >
+              Salvar Endereço
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% include 'parciais/footer.html'%}

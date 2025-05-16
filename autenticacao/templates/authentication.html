@@ -1,0 +1,100 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  {% include 'parciais/head.html'%}
+  <link rel="stylesheet" href="{% static 'css/authentication.css' %}" />   
+</head>
+
+<body>
+  <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+    <div class="toast {% if messages %} show {% endif %}" role="alert" aria-live="assertive" aria-atomic="true"
+      id="errorToast">
+      <div class="toast-header" style="background-color: red; color: white;">
+        <strong class="me-auto">Erro</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body" id="errorToastBody">
+        {% if messages %}
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div id="body">
+    <div id="contentApp">
+      <div id="contentLogin">
+
+        <div style="display: flex;justify-content: space-between; margin-bottom:20px">
+          <a href="#" target="_blank">
+            <img class="img_cabecalho" src="{% static 'images/gerlab4.png' %}" width="125px" alt="Logo ctic">
+          </a>
+
+          <a href="#" target="_blank">
+            <img class="img_cabecalho" src="{% static 'images/microzinho.png' %}" width="100px" alt="logo uea">
+          </a>
+        </div>
+
+        <h2 id="titleLogin">Login</h2>
+
+        <p>
+          <i>Bem-vindo ao <strong>Ger.Lab</strong></i>
+        </p>
+
+        <form action="{% url 'autenticacao' %}" method="POST" id="email-form">
+          {% csrf_token %}
+
+          <input id="email" placeholder="E-mail" class="form-control" required name="email" />
+
+          <div class="mt-3">
+            <input type="password" placeholder="Senha" class="form-control" id="password" name="password" />
+          </div>
+
+          <label id="label_manter_conectado" class="form-check-label" for="flexSwitchCheckDefault">Manter
+            conectado?</label>
+          <div class="pass d-flex justify-content-between">
+
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" name="checkbox" value="1"
+                id="flexSwitchCheckDefault" />
+            </div>
+
+            <a href="#" class="link" target="_blank">Esqueceu a Senha?</a>
+          </div>
+
+          <div class="login-button d-flex">
+            <button class="btn btn-danger font-weight-bold w-100">Entrar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="divider"></div>
+
+      <span>Desenvolvido pela <strong> <a target="_blank" class="link"
+            href="#">Para o TCC</a> </strong></span>
+    </div>
+
+    <a href="#" class="link">Problemas? Entre em contato com o TI</a>
+  </div>
+
+  <!-- SCRIPT PARA AUTENTICACAO -->
+  <script src="{% static 'js/auth.js' %}"></script>
+
+  <!-- SCRIPT PARA TOOLTIP DO BOOTSTRAP -->
+  <script>
+    const tooltipTriggerList = document.querySelectorAll(
+      '[data-toggle="tooltip"]'
+    );
+    const tooltipList = [...tooltipTriggerList].map(
+      (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+    );
+  </script>
+
+</body>
+
+</html>

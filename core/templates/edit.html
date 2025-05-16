@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <title>Editor</title>
+  {% include 'parciais/head.html'%}
+</head>
+
+<body>
+  <div>
+    <div id="conteudo_core">
+
+      {% include 'parciais/navbar.html'%}
+      {% if messages %}
+
+    </div>
+    <div class="alert-primary alert" style="display: block;">
+
+      {% for message in messages %}
+      {{ message }}
+      {% endfor %}
+
+    </div>
+  </div>
+
+  <script>
+    setTimeout(function () {
+      document.querySelector('.alert-primary').style.opacity = 0;
+      setTimeout(function () {
+        document.querySelector('.alert-primary').style.display = 'none';
+      }, 500);
+    }, 4000);
+  </script>
+  {% endif %}
+
+
+
+  {% include 'parciais/criar_ato.html'%}
+  </div>
+
+  {% include 'parciais/footer.html'%}
+  </div>
+ <div>
+
+  <ul>
+    {% for username in usernames %}
+      <li>{{ username }}</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

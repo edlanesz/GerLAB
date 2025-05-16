@@ -1,0 +1,103 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* Cor de fundo do corpo */
+}
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+    background-color: #fff; /* Cor de fundo do contêiner */
+    border-radius: 8px; /* Borda arredondada */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 8px; /* Borda arredondada */
+    overflow: hidden; /* Oculta a barra de rolagem horizontal */
+}
+th, td {
+    border: 1px solid #dee2e6; /* Cor da borda */
+    padding: 12px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+    font-weight: bold; /* Texto em negrito */
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.descricao {
+    overflow: hidden;
+    max-height: 3em; /* Limite de três linhas */
+    transition: max-height 0.5s ease; /* Transição suave */
+}
+.descricao-expandida {
+    max-height: none; /* Remove o limite de altura */
+}
+.btn-link {
+    text-decoration: underline;
+    color: #007bff; /* Cor do link */
+    cursor: pointer;
+}
+.btn-filtrar {
+    margin-bottom: 20px;
+}
+
+
+
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* Cor de fundo do corpo */
+}
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+    background-color: #fff; /* Cor de fundo do contêiner */
+    border-radius: 8px; /* Borda arredondada */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 8px; /* Borda arredondada */
+    overflow: hidden; /* Oculta a barra de rolagem horizontal */
+}
+th, td {
+    border: 1px solid #dee2e6; /* Cor da borda */
+    padding: 12px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+    font-weight: bold; /* Texto em negrito */
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.descricao {
+    overflow: hidden;
+    max-height: 3em; /* Limite de três linhas */
+    transition: max-height 0.5s ease; /* Transição suave */
+}
+.descricao-expandida {
+    max-height: none; /* Remove o limite de altura */
+}
+.btn-link {
+    text-decoration: underline;
+    color: #007bff; /* Cor do link */
+    cursor: pointer;
+}
+.btn-filtrar {
+    margin-bottom: 20px;
+}

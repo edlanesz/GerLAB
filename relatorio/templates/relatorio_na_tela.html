@@ -1,0 +1,279 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório na Tela</title>
+    <!-- Adicione o link para o CSS do Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static '/css/relatorio.css' %}" rel="stylesheet">
+<body>
+    {% include 'parciais/head.html' %}
+    {% include 'parciais/navbar.html' %}
+    <div class="container">
+        <h1 class="mt-5 mb-4 text-center">Relatório de Laboratórios</h1>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+           <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFiltrarPDF">Download PDF</a>
+            <button class="btn btn-primary btn-filtrar" data-bs-toggle="modal" data-bs-target="#modalFiltrar">Filtrar Relatórios</button>
+           
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nome do Laboratório</th>
+                        <th>Responsável</th>
+                        <th>Equipamento</th>
+                        <th>Unidade</th> <!-- Nova coluna para a unidade -->
+                        <th>Descrição</th> <!-- Manter a coluna de descrição -->
+                        <th>Parcerias e Fomentos</th> <!-- Adicionando coluna para o nome do parceito -->
+                        <th>Tipo</th> <!-- Adicionando coluna para o tipo -->
+                        <th>Pós</th> <!-- Adicionando coluna para Pós -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for laboratorio in laboratorios %}
+                    <tr>
+                        <td>{{ laboratorio.nome_laboratorio }}</td>
+                        <td>{{ laboratorio.responsavel }}</td>
+                        <td>
+                            <div style="max-height: 200px; overflow-y: auto;">
+                                {% if laboratorio.infraestrutura_set.all %}
+                                    <ul>
+                                        {% for infraestrutura in laboratorio.infraestrutura_set.all %}
+                                            <li>{{ infraestrutura.equipamento.nome_equipamento }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    Sem equipamentos registrados.
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% if laboratorio.unidade %}
+                                {{ laboratorio.unidade }}
+                            {% else %}
+                                Por favor preencha os dados de unidade.
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if laboratorio.descricao %}
+                                <div class="descricao">
+                                    {{ laboratorio.descricao }}
+                                </div>
+                                {% if laboratorio.descricao|length > 200 %}
+                                    <button class="btn btn-link" onclick="toggleDescricao(this)">Mostrar Mais</button>
+                                {% endif %}
+                            {% else %}
+                                Sem descrição no momento.
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if laboratorio.Formentos.all %}
+                                <ul>
+                                    {% for formento in laboratorio.Formentos.all %}
+                                        <li>{{ formento.nomedoparceito }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                Sem formentos registrados.
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if laboratorio.Formentos.all %}
+                                <ul>
+                                    {% for formento in laboratorio.Formentos.all %}
+                                        <li>{{ formento.tipo }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                Sem formentos registrados.
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if laboratorio.pos.all %}
+                                <ul>
+                                    {% for pos in laboratorio.pos.all %}
+                                        <li>{{ pos.nome_do_Programa }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                Sem pós registradas.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+<!-- Modal de Filtro para PDF -->
+<div class="modal fade" id="modalFiltrarPDF" tabindex="-1" aria-labelledby="modalFiltrarPDFLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFiltrarPDFLabel">Filtrar Relatório para PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulário para enviar os filtros para a view filtrar_para_pdf -->
+                <form method="post" action="{% url 'filtrar_para_pdf' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="inputResponsavelPDF" class="form-label">Filtrar por Responsável:</label>
+                        <select class="form-select" id="inputResponsavelPDF" name="inputResponsavelPDF">
+                            <option selected>Escolha o responsável...</option>
+                            {% for responsavel in responsaveis %}
+                                <option value="{{ responsavel }}">{{ responsavel }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputUnidadePDF" class="form-label">Filtrar por Unidade:</label>
+                        <select class="form-select" id="inputUnidadePDF" name="inputUnidadePDF">
+                            <option selected>Escolha a unidade...</option>
+                            {% for unidade in unidades %}
+                                <option value="{{ unidade }}">{{ unidade }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                   <div class="mb-3">
+    <label for="inputLaboratorioPDF" class="form-label">Filtrar por Laboratório:</label>
+    <select class="form-select" id="inputLaboratorioPDF" name="inputLaboratorioPDF">
+        <option selected>Escolha o laboratório...</option>
+        {% for laboratorio in todos_laboratorios %}
+                        <option value="{{ laboratorio.nome_laboratorio }}">{{ laboratorio.nome_laboratorio }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+
+                <div class="mb-3">
+    <label for="inputEquipamentoPDF" class="form-label">Filtrar por Equipamento:</label>
+    <select class="form-select" id="inputEquipamentoPDF" name="inputEquipamentoPDF">
+        <option selected>Escolha o equipamento...</option>
+        {% for equipamento in equipamentos %}
+            <option value="{{ equipamento }}">{{ equipamento }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+
+                    
+                    <!-- Adicione mais campos de filtro conforme necessário -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <!-- Botão para enviar o formulário -->
+                        <button type="submit" class="btn btn-primary">Filtrar e Baixar PDF</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    <!-- Modal para filtrar por responsável -->
+  <!-- Modal para filtrar laboratorios  -->
+      <div class="modal fade" id="modalFiltrar" tabindex="-1" aria-labelledby="modalFiltrarLabel" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="modalFiltrarLabel">Filtrar Relatórios</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="mb-3">
+                     <label for="inputLaboratorio" class="form-label">Escolha o laboratório:</label>
+                     <select class="form-select" id="inputLaboratorio">
+                        <option selected>Escolha o laboratório...</option>
+                        {% for laboratorio in todos_laboratorios %}
+                        <option value="{{ laboratorio.nome_laboratorio }}">{{ laboratorio.nome_laboratorio }}</option>
+                        {% endfor %}
+                     </select>
+                  </div>
+                  <div class="mb-3">
+                     <label for="inputResponsavel" class="form-label">Filtrar por Responsável:</label>
+                     <select class="form-select" id="inputResponsavel">
+                        <option selected>Escolha o responsável...</option>
+                        {% for responsavel in responsaveis %}
+                        <option value="{{ responsavel }}">{{ responsavel }}</option>
+                        {% endfor %}
+                     </select>
+                  </div>
+                  <div class="mb-3">
+                     <label for="inputUnidade" class="form-label">Filtrar por Unidade:</label>
+                     <select class="form-select" id="inputUnidade">
+                        <option selected>Escolha a unidade...</option>
+                        {% for unidade in unidades %}
+                        <option value="{{ unidade }}">{{ unidade }}</option>
+                        {% endfor %}
+                     </select>
+                  </div>
+                  <div class="mb-3">
+                     <label for="inputEquipamento" class="form-label">Filtrar por Equipamento:</label>
+                     <select class="form-select" id="inputEquipamento">
+                        <option selected>Escolha o equipamento...</option>
+                        {% for equipamento in equipamentos %}
+                        <option value="{{ equipamento }}">{{ equipamento }}</option>
+                        {% endfor %}
+                     </select>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                  <button type="button" class="btn btn-primary" onclick="filtrarPorResponsavel()">Filtrar</button>
+               </div>
+            </div>
+         </div>
+      </div>
+     <script src="{% static '/js/relatorio.js' %}"></script>
+     <script>
+function filtrarParaPDF() {
+    var responsavelSelecionado = document.getElementById('inputResponsavelPDF').value;
+    var unidadeSelecionada = document.getElementById('inputUnidadePDF').value;
+    var laboratorioSelecionado = document.getElementById('inputLaboratorioPDF').value;
+
+    // Faça uma requisição POST para o endpoint filtrar_para_pdf
+    fetch('/filtrar_para_pdf/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'  // Adicione o token CSRF se estiver usando-o
+        },
+        body: JSON.stringify({
+            responsavel: responsavelSelecionado,
+            unidade: unidadeSelecionada,
+            laboratorio: laboratorioSelecionado
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            // Redirecione para a visualização de PDF
+            window.location.href = '/gerar_pdf/';
+        } else {
+            console.error('Erro ao filtrar para PDF');
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao filtrar para PDF:', error);
+    });
+}
+
+</script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

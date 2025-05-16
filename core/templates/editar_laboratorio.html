@@ -1,0 +1,565 @@
+{% load static %}
+{% include 'parciais/head.html' %}
+<style>
+    .form-check-label {
+        margin-left: 10px;
+    }
+
+
+#ui-id-2 {
+    display: none !important;
+}
+
+.ui-helper-hidden-accessible {
+    display: none !important;
+}
+
+.ui-menu-item {
+    display: none !important;
+}
+
+
+
+.responsavel-associado .info {
+    margin-bottom: 10px;
+}
+
+.responsavel-associado .detalhes {
+    display: none;
+    margin-top: 10px;
+}
+
+.responsavel-associado .excluir-button {
+    display: none;
+    width: 8%;
+}
+
+
+.responsavel-associado.active .detalhes {
+    display: block;
+}
+
+
+
+.user-icon::after {
+    content: "\1F464"; /* Código Unicode para o ícone do usuário */
+    margin-left: 5px;
+    font-family: 'Font Awesome'; /* Se estiver usando Font Awesome para ícones */
+    font-size: 20px;
+}
+
+
+        .custom-button {
+        width: 150px; /* Ajuste a largura conforme necessário */
+        margin-right: 10px; /* Espaçamento entre os botões */
+    }
+
+    #botaoAprovar {
+        background-color: #008000; /* Cor verde para o botão Aprovar, ajuste conforme necessário */
+    }
+
+    #botaoCancelar {
+        background-color: #808080; /* Cor cinza para o botão Cancelar, ajuste conforme necessário */
+        color: #fff; /* Cor do texto, ajuste conforme necessário */
+    }
+
+    #botoesContainer {
+        margin-top: 20px; /* Adiciona uma margem na parte superior dos botões */
+    }
+
+
+
+
+</style>
+
+<body>
+    {% include 'parciais/navbar.html' %}
+    <form action="{% url 'editar_laboratorio' laboratorio_id=laboratorio.id imagem_id=0 %}" method="POST"
+        enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% include 'parciais/ferramentas.html' %}
+        <div class="container">
+            <div class="row justify-content-center p-1 ">
+
+                <section class="rounded" id="formulario_autoridade">
+                    <div class="row gap-1" id="endereco-tab">
+                        <h5 class="titulo">Laboratório</h5>
+
+                       
+{#                        <input class="form-control" placeholder="Nome do laboratório" name="nome_laboratorio"#}
+{#                                value="{{ laboratorio.nome_laboratorio|default_if_none:'' }}" {% if is_admin %} readonly {% endif %}>#}
+
+                        <input class="form-control" placeholder="Nome do laboratório" name="nome_laboratorio" value="{{ laboratorio.nome_laboratorio|default_if_none:'' }} "  {% if not is_admin %} readonly {% endif %}>
+
+                        <div class="input-group">
+<input class="form-control" placeholder="Responsável pelo laboratório" name="responsavel" id="responsavel" value="{{ laboratorio.responsavel|default_if_none:'' }}" {% if not is_admin %}  {% endif %}>
+<BR><br><input name="user_ldap_responsavel" id="user_ldap_responsavel" value="{{ laboratorio.user_ldap_responsavel|default_if_none:'' }}" >
+
+
+                            {% if is_admin or laboratorio.user_ldap_responsavel == user_ldap_session  %}
+                                <button type="button" class="btn btn-outline-secondary user-icon" onclick="adicionarNovoResponsavel()">+</button>
+                            {% endif %}
+                        </div>
+
+                              {% if is_admin or laboratorio.user_ldap_responsavel == user_ldap_session  %}
+<div id="novoResponsavelAssociadoContainer"></div>
+<input type="hidden" id="cpf_responsavel_novo_responsavel_1" name="cpf_responsavel_novo_responsavel_1" value="">
+<input type="hidden" id="user_ldap_responsavel_novo_responsavel_1" name="user_ldap_responsavel_novo_responsavel_1" value="">
+
+<ul id="sugestoes-responsavel" class="list-group mt-2"></ul>
+
+
+                            {% endif %}
+
+                            <input class="form-control" placeholder="E-mail" name="email"
+                                value="{{ laboratorio.email|default_if_none:'' }}"{% if not is_admin %} readonly {% endif %} >
+
+
+                                 <input class="form-control" placeholder="Telefone" name="telefone"
+                                value="{{ laboratorio.telefone|default_if_none:'' }}" {% if not is_admin %} readonly {% endif %}>
+
+
+                                 
+
+                            <textarea rows="3" class="form-control"
+                                placeholder="Descrição das atividades de pesquisa e ensino"
+                                name="descricao">{{ laboratorio.descricao|default_if_none:'' }}</textarea>
+
+
+                            <input class="form-control" placeholder="Link do site" name="site" value="{{ laboratorio.site|default_if_none:'' }}">
+
+                            <input class="form-control" placeholder="Link do PNIPE" name="link_pnipe"
+                                value="{{ laboratorio.link_pnipe|default_if_none:'' }}">
+
+
+                                                                <!-- Campo de entrada de arquivo para adicionar uma nova imagem -->
+                                <input type="file" name="imagem_laboratorio" accept="image/*" class="form-control mb-3">
+
+                                <!-- Lista das imagens existentes com opções para excluir -->
+                                <ul class="list-group mb-3">
+                                    {% for imagem in laboratorio.imagens.all %}
+                                        <li class="list-group-item">
+                                            <!-- Exibe a imagem associada ao laboratório -->
+                                            <img src="{{ imagem.imagem.url }}" alt="Imagem do Laboratório" width="100">
+                                            <span class="float-right">
+                                                <a href="{% url 'excluir_imagem_laboratorio' laboratorio_id=laboratorio.id imagem_id=imagem.id %}"
+                                                   class="btn btn-danger btn-sm"
+                                                 onclick="return confirm('Deseja realmente excluir esta imagem?\nObs: As informações não poderão ser recuperadas.')">Excluir</a>
+                                            </span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+
+
+                                
+
+
+
+
+
+
+
+                        <!-- Botão de submit -->
+                        <button id="botao_proximo" type="submit" class="btn btn-success float-right">Salvar</button>
+                    </div>
+                </section>
+
+
+
+                {% if is_admin %}
+                <div id="botoesContainer" class="text-center">
+                    {% if laboratorio.aprovado %}
+                        <button type="button" class="btn btn-secondary" id="botaoCancelar" onclick="confirmarCancelamento()">Cancelar Aprovação</button>
+                    {% else %}
+                        <button type="button" class="btn btn-primary float-start" id="botaoAprovar" onclick="confirmarAprovacao()">Aprovar Laboratório</button>
+                        <button type="button" class="btn btn-secondary" id="botaoCancelar" style="display: none;" onclick="confirmarCancelamento()">Cancelar Aprovação</button>
+                    {% endif %}
+
+                    <a href="{% url 'excluir_laboratorio' laboratorio_id=laboratorio.id %}" class="btn btn-danger ml-auto float-end btn" onclick="return confirm('Deseja realmente excluir este laboratório?\nObs: As informações não poderão ser recuperadas.')">Excluir Permanentemente</a>
+                
+                    <div>
+                        {% if laboratorio.ocultar_laboratorio %}
+                            <button type="button" class="btn btn-primary d-inline-block" id="botaoDesocultarLaboratorio" onclick="desocultarLaboratorio()">Desocultar Laboratório</button>
+                        {% else %}
+                            <button type="button" class="btn btn-secondary d-inline-block" id="botaoOcultarLaboratorio" onclick="ocultarLaboratorio()">Ocultar Laboratório</button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+</div><br>
+
+
+{#<button type="button" class="btn btn-warning" id="botaoOcultarLaboratorio" onclick="ocultarLaboratorio()">#}
+{#    Ocultar Laboratório#}
+{#</button>#}
+
+
+<br>
+<div class="mt-2" >
+</div>
+
+
+
+
+
+
+              <section class="rounded mt-4" id="responsaveis-associados">
+    <h5 class="titulo">Responsáveis Associados</h5>
+
+    {% for responsavel_associado in laboratorio.responsaveis_associados.all %}
+        <div class="responsavel-associado" onclick="exibirDetalhes(this)">
+    <p class="info">{{ responsavel_associado.nome }}</p>
+    <div class="detalhes" style="display: none;">
+        <strong><p>CPF: {{ responsavel_associado.cpf }}</p>
+        <p>USER_LDAP: {{ responsavel_associado.user_ldap }}</p></strong>
+        <button class="btn btn-danger excluir-button" onclick="excluirResponsavelAssociado(event, '{{ laboratorio.id }}', '{{ responsavel_associado.id }}')">Excluir</button>
+    </div>
+</div>
+
+    {% endfor %}
+</section>
+
+
+
+            </div>
+        </div>
+    </form>
+    {% include 'parciais/footer.html'%}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- jQuery UI -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  <script>
+    $(function() {
+        $("#responsavel").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "/buscar_nomes/",
+                    type: "GET",
+                    data: {
+                        term: request.term
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        console.log("DEBUG: Dados recebidos:", data);
+
+                        var mappedData = data.map(function(item) {
+                            return {
+                                label: item.label,
+                                value: item.value,
+                                cpf: item.cpf,
+                                user_ldap: item.user_ldap
+                            };
+                        });
+
+                        response(mappedData);
+                    }
+                });
+            },
+            classes: {
+                    "ui-autocomplete": "bg-white list-group-item list-group-item-action",
+                },
+            minLength: 2,
+            messages: {
+                noResults: '',
+                results: function() {}
+            },
+            select: function(event, ui) {
+                console.log("DEBUG: CPF selecionado:", ui.item.cpf);
+                console.log("DEBUG: USER_LDAP correspondente:", ui.item.user_ldap);
+
+                // Atualize os campos ocultos com CPF e USER_LDAP selecionados
+                $("#cpf_responsavel").val(ui.item.cpf);
+                $("#user_ldap_responsavel").val(ui.item.user_ldap);
+            }
+        });
+
+        // Adiciona o evento de alteração para atualizar os campos ocultos
+        $("#responsavel").on("change", function() {
+            // Obtenha o valor atual do campo de responsável
+            var responsavelAtual = $(this).val();
+
+            // Faça uma chamada AJAX para obter os dados do responsável (ou use dados locais se possível)
+            $.ajax({
+                url: "/buscar_nomes/",
+                type: "GET",
+                data: {
+                    term: responsavelAtual
+                },
+                dataType: "json",
+                success: function(data) {
+                    if (data.length > 0) {
+                        // Use os dados do primeiro resultado (pode precisar ajustar se houver múltiplos resultados)
+                        var responsavel = data[0];
+                        console.log("DEBUG: CPF selecionado:", responsavel.cpf);
+                        console.log("DEBUG: USER_LDAP correspondente:", responsavel.user_ldap);
+
+                        // Atualize os campos ocultos com CPF e USER_LDAP obtidos
+                        $("#cpf_responsavel").val(responsavel.cpf);
+                        $("#user_ldap_responsavel").val(responsavel.user_ldap);
+                    }
+                }
+
+            });
+        });
+    });
+
+      // Defina a variável contadorResponsaveis fora da função
+var contadorResponsaveis = 1;
+
+function adicionarNovoResponsavel() {
+    // Remova os campos existentes antes de adicionar um novo
+    $("#novoResponsavelAssociadoContainer").empty();
+
+    var novoResponsavelHtml = `
+        <div class="input-group mt-2" id="novoResponsavel${contadorResponsaveis}">
+            <input type="text" class="form-control novoResponsavelAutocomplete" placeholder="Novo Responsável Associado" name="novo_responsavel_1">
+            <input type="hidden" class="cpf_responsavel" id="cpf_responsavel_${contadorResponsaveis}" name="cpf_responsavel_${contadorResponsaveis}" value="">
+            <input type="hidden" class="user_ldap_responsavel" id="user_ldap_responsavel_${contadorResponsaveis}" name="user_ldap_responsavel_${contadorResponsaveis}" value="">
+            <button type="button" class="btn btn-outline-secondary" onclick="removerResponsavel(${contadorResponsaveis})">-</button>
+        </div>
+    `;
+    $("#novoResponsavelAssociadoContainer").append(novoResponsavelHtml);
+
+    // Ativar a função de autocompletar para o novo responsável
+    var novoResponsavelAutocomplete = $(`#novoResponsavel${contadorResponsaveis} .novoResponsavelAutocomplete`);
+    var cpfHiddenInput = $(`#cpf_responsavel_${contadorResponsaveis}`);
+    var userLdapHiddenInput = $(`#user_ldap_responsavel_${contadorResponsaveis}`);
+    var sugestoesResponsavel = $("#sugestoes-responsavel");
+
+    novoResponsavelAutocomplete.autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "/buscar_nomes/",
+                type: "GET",
+                data: {
+                    term: request.term
+                },
+                dataType: "json",
+                success: function (data) {
+                    console.log("DEBUG: Dados recebidos para novo responsável associado:", data);
+
+                    var mappedData = data.map(function (item) {
+                        return {
+                            label: item.label,
+                            value: item.value,
+                            cpf: item.cpf,
+                            user_ldap: item.user_ldap
+                        };
+                    });
+
+                     response(mappedData);
+
+                            // Limpa a lista de sugestões
+                            sugestoesResponsavel.empty();
+
+                            // Adiciona as sugestões à lista e torna-as clicáveis e selecionáveis
+                            mappedData.forEach(function (item) {
+                                var listItem = $(`<li class="list-group-item">${item.label}</li>`);
+                                sugestoesResponsavel.append(listItem);
+
+                                // Adiciona evento de clique para selecionar o item
+                                listItem.on('click', function() {
+                                    novoResponsavelAutocomplete.val(item.label);
+                                    cpfHiddenInput.val(item.cpf);
+                                    userLdapHiddenInput.val(item.user_ldap);
+                                    sugestoesResponsavel.empty(); // Limpa a lista após seleção
+                                });
+                            });
+                        }
+                    });
+                },
+                minLength: 2,
+                messages: {
+                    noResults: '',
+                    results: function () { }
+                },
+                select: function (event, ui) {
+                    console.log("DEBUG: CPF selecionado para novo responsável associado:", ui.item.cpf);
+                    console.log("DEBUG: USER_LDAP correspondente para novo responsável associado:", ui.item.user_ldap);
+
+                    // Atualize o campo oculto do novo responsável associado específico
+                    cpfHiddenInput.val(ui.item.cpf);
+                    userLdapHiddenInput.val(ui.item.user_ldap);
+                }
+            });
+
+    contadorResponsaveis++;
+}
+
+
+
+
+
+
+
+
+
+function removerResponsavel(id) {
+    $(`#novoResponsavel${id}`).remove();
+}
+
+
+
+
+
+function exibirDetalhes(element) {
+    var responsavelAssociado = $(element);
+    var detalhes = responsavelAssociado.find(".detalhes");
+    detalhes.slideToggle();
+    responsavelAssociado.find(".excluir-button").toggle();
+    responsavelAssociado.toggleClass("active"); // Adicionado para controlar o estado ativo
+}
+
+
+
+
+
+  let isExclusaoEmAndamento = false;
+
+async function excluirResponsavelAssociado(event, laboratorioId, responsavelId) {
+    event.preventDefault();
+
+    // Adiciona um modal de confirmação
+    const confirmacao = confirm("Tem certeza que deseja excluir esse responsável associado?");
+    if (!confirmacao) {
+        return;
+    }
+
+    if (isExclusaoEmAndamento) {
+        console.log("DEBUG: Exclusão em andamento, aguarde...");
+        return;
+    }
+
+    isExclusaoEmAndamento = true;
+
+    const csrftoken = getCookie('csrftoken');
+
+    try {
+        const response = await fetch(`/excluir_responsavel_associado/${laboratorioId}/${responsavelId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            }
+        });
+
+        if (response.ok) {
+            // Remova o responsável associado da lista visual imediatamente
+            $(`.responsavel-associado[data-responsavel-id="${responsavelId}"]`).remove();
+
+            // Atualize a página após a exclusão
+            location.reload();
+        } else {
+            console.error("Erro ao excluir responsável associado:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Erro ao excluir responsável associado:", error);
+    } finally {
+        isExclusaoEmAndamento = false;
+    }
+}
+
+
+
+
+
+
+
+// Função para obter o valor do cookie
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+function confirmarAprovacao() {
+    const confirmacao = confirm("Deseja realmente aprovar esse laboratório?");
+
+    if (confirmacao) {
+        const csrftoken = getCookie('csrftoken');
+        const laboratorioId = '{{ laboratorio.id }}';
+
+        // Substitua a lógica do AJAX pela recarga da página
+        window.location.href = `/aprovar_laboratorio/${laboratorioId}/`;
+    }
+}
+
+function confirmarCancelamento() {
+    const confirmacao = confirm("Deseja cancelar a aprovação desse laboratório?");
+
+    if (confirmacao) {
+        const csrftoken = getCookie('csrftoken');
+        const laboratorioId = '{{ laboratorio.id }}';
+
+        // Substitua a lógica do AJAX pela recarga da página
+        window.location.href = `/cancelar_aprovacao/${laboratorioId}/`;
+    }
+}
+
+function ocultarLaboratorio() {
+    const confirmacao = confirm("Tem certeza que deseja ocultar este laboratório?");
+
+    if (confirmacao) {
+        const csrftoken = getCookie('csrftoken');
+        const laboratorioId = '{{ laboratorio.id }}';
+
+        $.ajax({
+            url: `/ocultar_laboratorio/${laboratorioId}/`,
+            type: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            success: function (data) {
+                alert("Laboratório ocultado com sucesso!");
+                // Recarregar a página após ocultar o laboratório
+                location.reload();
+            },
+            error: function (error) {
+                console.error("Erro ao ocultar laboratório:", error);
+            }
+        });
+    }
+}
+
+function desocultarLaboratorio() {
+    const confirmacao = confirm("Tem certeza que deseja desocultar este laboratório?");
+
+    if (confirmacao) {
+        const csrftoken = getCookie('csrftoken');
+        const laboratorioId = '{{ laboratorio.id }}';
+
+        $.ajax({
+            url: `/desocultar_laboratorio/${laboratorioId}/`,
+            type: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            success: function (data) {
+                // Recarregar a página após desocultar o laboratório
+                location.reload();
+            },
+            error: function (error) {
+                console.error("Erro ao desocultar laboratório:", error);
+            }
+        });
+    }
+}
+
+$(document).ready(function() {
+    $('.ui-helper-hidden-accessible').hide();
+});
+
+
+
+
+    </script>
+</body>

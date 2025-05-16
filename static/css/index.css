@@ -1,0 +1,197 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  --corBackground: #ffffff;
+  --corPrimaria: #2a5a48;
+  --corSegundaria: #2a5a48;
+  background-color: var(--corBackground);
+  width: 100vw;
+  height: 100vh;
+}
+
+p{
+  color: #4F4F4F;
+}
+h5{
+  color: #4F4F4F;
+}
+
+
+
+.titulo {
+  background-color: var(--corPrimaria);
+  text-transform: uppercase;
+  border-radius: 8px 8px 0 0;
+  padding: 4px;
+  color: #ffffff;
+}
+
+.card-body-ato {
+  max-width: 200px;
+}
+
+.card-atos {
+
+}
+
+.card-link {
+  cursor: pointer;
+  background-color: #e3e0e0;
+  color: #000000;
+  min-height: 200px;
+  transition: .3s;
+}
+
+.card-link:hover {
+
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.463);
+}
+
+#placeholder {
+  display: flex;
+  justify-content: center;
+}
+
+.col-6 {
+  border: 2px solid #161f29;
+  border-radius: 100px;
+  width: 47rem;
+  height: 40rem;
+  margin-left: 0%;
+}
+
+
+
+.alert-primary {
+  padding: 10px;
+  text-align: center;
+  font-size: 1.2em;
+  background-color: #034b8280;
+  color: white;
+  transition: opacity 0.5s ease-in-out;
+}
+
+
+.bg-default {
+  background-color: #b3b5c2ce !important;
+}
+
+.bg-success-light {
+  background-color: #001f62 !important;
+}
+
+.bg-warning{
+  background-color: rgb(149, 242, 4) !important;
+}
+
+.bg-warning-2{
+  background-color: rgb(236, 48, 48) !important;
+}
+
+
+.status{
+  margin-top: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+.footer-uea {
+  padding-top:10px ;
+  margin-top: 10px;
+  height: 2.2rem;
+
+}
+
+
+.page-item.active .page-link {
+  color: #fafafa;
+  background-color: var(--corPrimaria);
+  border-color: var(--corPrimaria);
+}
+
+.page-link {
+  color: #000000;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.page-link:hover {
+  background-color: #ffffff;
+}
+
+.page-link:hover {
+  color: #006221;
+}
+
+.messages {
+  transition: opacity 1s ease;
+  color: #ff0404;
+}
+
+.btn-boletim {
+  text-align: left;
+  background-color: rgb(201, 201, 201);
+}
+
+.btn-boletim:hover {
+  background-color: rgb(139, 139, 139);
+}
+
+@media (max-width: 767px) {}
+
+.color{
+  color: #001f62;
+
+}
+
+.container{
+  padding-bottom: 40px;
+}
+.colorbotao{
+  color: #fafafa;
+  background-color: #001f62;
+
+}
+
+
+.imagem{
+  width: 100%;
+  height: 250px;
+}
+
+.carousel{
+  border-radius: 5px;
+}
+
+
+.btn.active {
+  
+  background-color: #818388;
+  color:#030302;
+}
+
+.color_footer {
+  
+  background-color: var(--corPrimaria);
+  color:#030302;
+}
+body {
+  overflow-x: hidden; 
+}
+
+.text-dark.card {
+  text-decoration: none; 
+}
+
+/* label {
+  text-transform: capitalize;
+} */
+
+.link_gov a {
+  color: white; /* Define a cor do texto dos links como branco */
+  text-decoration: none; /* Remove o sublinhado padrão dos links */
+}

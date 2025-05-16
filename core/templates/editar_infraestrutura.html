@@ -1,0 +1,474 @@
+{% load static %}
+{% include 'parciais/head.html' %}
+{% include 'parciais/navbar.html' %}
+{% include 'parciais/ferramentas.html' %}
+
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+        <h2 class="text-center">Informações de Infraestrutura</h2>
+    </div>
+
+    <div class="card-body p-2">
+        <div class="table-responsive">
+            {% if infraestruturas %}
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Equipamento</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Finalidade</th>
+                        <th>Tombo</th>
+                        <th>Quantidade</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for laboratorio_infraestrutura in infraestruturas %}
+                    <tr>
+                        <td>
+                            {% if laboratorio_infraestrutura.status == True %}
+                            <div class="status bg-warning rounded-circle"></div>
+                            {% endif %}
+                            {% if laboratorio_infraestrutura.status == False %}
+                            <div class="status bg-warning-2 rounded-circle"></div>
+                            {% endif %}
+                        </td>
+                        <td>{{ laboratorio_infraestrutura.equipamento.nome_equipamento }}</td>
+                        <td>{{ laboratorio_infraestrutura.marca.nome_marca }}</td>
+                        <td>{{ laboratorio_infraestrutura.modelo }}</td>
+                        <td>{{ laboratorio_infraestrutura.finalidade|default_if_none:'' }}</td>
+                        <td>{{ laboratorio_infraestrutura.tombo }}</td>
+                        <td>{{ laboratorio_infraestrutura.quantidade }}</td>
+                        <td class="d-flex">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal{{ laboratorio_infraestrutura.id }}">Visualizar</button>
+                            <form action="{% url 'delete_infra' laboratorio_id=laboratorio_infraestrutura.id %}">
+                                <button type="submit" class="btn btn-danger">Excluir</button>
+                            </form>
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                data-bs-target="#editModal{{ laboratorio_infraestrutura.id }}"
+                                onclick="abrirModalEdicao('{{ laboratorio_infraestrutura.id }}')">Editar</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>Nenhuma infraestrutura encontrada para este laboratório.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+  <div class="card rounded mt-4">
+    <div class="card-header">
+      <h2 class="text-center">Adicionar Nova Infraestrutura</h2>
+    </div>
+
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" class="row">
+        {% csrf_token %}
+
+        <div class="input-group mb-3">
+          <select class="form-control" id="novo_equipamento" name="equipamento" required>
+            <option value="">Escolha um equipamento</option>
+            {% for equipamento in equipamentos %}
+            <option value="{{ equipamento.id }}">{{ equipamento.nome_equipamento }}</option>
+            {% endfor %}
+          </select>
+       <div style="display: flex; align-items: center;">
+   <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal-e">
+    <i class="bi bi-plus-circle-fill"></i> Adicionar Equipamento
+</button>
+
+
+
+
+
+        </div>
+
+        <div class="input-group col-md-6 col-sm-12">
+          <select class="form-control" id="nova_marca" name="marca" required>
+            <option value="">Escolha uma marca</option>
+            {% for marca in marcas %}
+            <option value="{{ marca.id }}">{{ marca.nome_marca }}</option>
+            {% endfor %}
+          </select>
+         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal-m">
+    <i class="bi bi-plus-circle-fill"></i> Adicionar Marca
+</button>
+
+
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+          <label for="novo_modelo" class="mt-3 fw-bold">Modelo</label>
+          <input type="text" id="novo_modelo" name="modelo" class="form-control shadow-sm">
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+          <label for="nova_finalidade" class="mt-3 fw-bold">Finalidade:</label>
+          <input type="text" id="nova_finalidade" name="finalidade" class="form-control shadow-sm">
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+          <label for="tombo" class="mt-3 fw-bold">Tombo:</label>
+          <input type="text" id="tombo" name="tombo" class="form-control shadow-sm">
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+          <label for="quantidade" class="mt-3 fw-bold">Quantidade:</label>
+          <input type="number" id="quabtidade" name="quantidade" class="form-control shadow-sm">
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+          <label for="nova_imagem" class="mt-3 fw-bold">Imagens da Infraestrutura</label>
+          <input type="file" class="form-control" id="nova_imagem" name="nova_imagem" multiple>
+        </div>
+
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary mt-3" name="salvar_infraestrutura">Adicionar
+            Infraestrutura</button>
+        </div>
+
+        {% if form.errors %}
+        <div class="alert alert-danger mt-3"><strong>Erro no formulário:</strong> {{ form.errors }} </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+
+
+  {% for laboratorio_infraestrutura in infraestruturas %}
+  <div class="modal fade" id="exampleModal{{laboratorio_infraestrutura.id}}" tabindex="-1"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header ">
+          <div class="d-flex">
+            {% if laboratorio_infraestrutura.status == True %}
+            <div class="status  bg-warning rounded-circle">
+
+            </div>
+            <span class="m-2">Ativo</span>
+            {% endif %}
+            {% if laboratorio_infraestrutura.status == False %}
+            <div class="status  bg-warning-2 rounded-circle">
+
+            </div>
+            <span class="m-2">Em Manutenção</span>
+            {% endif %}
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="w-100">
+            {% for imagem in laboratorio_infraestrutura.imagens_infraestrutura.all %}
+            <img src="{{ imagem.imagem.url }}" alt="{{ imagem.descricao }}" title="{{ imagem.titulo }}" width="450">
+            {% endfor %}
+          </div>
+
+
+          <div>
+
+            <h2>{{ laboratorio_infraestrutura.equipamento.nome_equipamento}}</h2>
+            <h4>{{ laboratorio_infraestrutura.marca.nome_marca }}</h4>
+            <strong>{{ laboratorio_infraestrutura.modelo }}</strong>
+            <p>{{ laboratorio_infraestrutura.finalidade}}</p>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <a type="button" href="{% url 'change_status' id=laboratorio_infraestrutura.id  %}"
+            class="btn btn-primary">Mudar Status</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+ 
+
+  {% endfor %}
+
+  <div class="modal fade" id="exampleModal-e" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form method="POST" action="{% url 'adicionar_equipamento' %}">
+        {% csrf_token %}
+
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Adicionar Equipamento</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input  class="form-control" type="text" name="nome_equipamento" placeholder="Nome do Equipamento" />
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Adicionar</button>
+          </div>
+        </form>
+  
+      </div>
+    </div>
+  </div>
+  
+
+
+  <div class="modal fade" id="exampleModal-m" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form method="POST" action="{% url 'adicionar_equipamento' %}">
+        {% csrf_token %}
+
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Adicionar Marca</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input class="form-control mt-2" type="text" name="nome_marca" placeholder="Nome da marca" >
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Adicionar</button>
+          </div>
+        </form>
+  
+      </div>
+    </div>
+  </div>
+
+<!-- Modais de Edição -->
+{% for laboratorio_infraestrutura in infraestruturas %}
+<div class="modal fade" id="editModal{{laboratorio_infraestrutura.id}}" tabindex="-1" role="dialog"
+    aria-labelledby="editModalLabel{{laboratorio_infraestrutura.id}}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel{{laboratorio_infraestrutura.id}}">Editar Infraestrutura</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                   <select class="form-control" id="edit_equipamento{{laboratorio_infraestrutura.id}}" name="edit_equipamento" required>
+
+                        <option value="">Escolha um equipamento</option>
+                        {% for equipamento in equipamentos %}
+                        <option value="{{ equipamento.id }}"
+                            {% if equipamento.id == laboratorio_infraestrutura.equipamento.id %} selected {% endif %}>
+                            {{ equipamento.nome_equipamento }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div style="display: flex; align-items: center;">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal-e">
+                            <i class="bi bi-plus-circle-fill"></i> Adicionar Equipamento
+                        </button>
+                    </div>
+                </div>
+
+                <div class="input-group col-md-6 col-sm-12">
+              <select class="form-control" id="edit_marca{{laboratorio_infraestrutura.id}}" name="edit_marca" required>
+
+                        <option value="">Escolha uma marca</option>
+                        {% for marca in marcas %}
+                        <option value="{{ marca.id }}"
+                            {% if marca.id == laboratorio_infraestrutura.marca.id %} selected {% endif %}>
+                            {{ marca.nome_marca }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div style="display: flex; align-items: center;">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal-m">
+                            <i class="bi bi-plus-circle-fill"></i> Adicionar Marca
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-sm-12">
+                    <label for="edit_modelo{{laboratorio_infraestrutura.id}}" class="mt-3 fw-bold">Modelo</label>
+                    <input type="text" id="edit_modelo{{laboratorio_infraestrutura.id}}" name="edit_modelo"
+                        class="form-control shadow-sm" value="{{ laboratorio_infraestrutura.modelo }}">
+                </div>
+
+                <div class="col-md-6 col-sm-12">
+                    <label for="edit_finalidade{{laboratorio_infraestrutura.id}}" class="mt-3 fw-bold">Finalidade:</label>
+                    <input type="text" id="edit_finalidade{{laboratorio_infraestrutura.id}}" name="edit_finalidade"
+                        class="form-control shadow-sm"
+                        value="{{ laboratorio_infraestrutura.finalidade|default_if_none:'' }}">
+                </div>
+
+                <div class="col-md-6 col-sm-12">
+                    <label for="edit_tombo{{laboratorio_infraestrutura.id}}" class="mt-3 fw-bold">Tombo:</label>
+                    <input type="text" id="edit_tombo{{laboratorio_infraestrutura.id}}" name="edit_tombo"
+                        class="form-control shadow-sm" value="{{ laboratorio_infraestrutura.tombo }}">
+                </div>
+
+                <div class="col-md-6 col-sm-12">
+                    <label for="edit_quantidade{{laboratorio_infraestrutura.id}}" class="mt-3 fw-bold">Quantidade:</label>
+                    <input type="number" id="edit_quantidade{{laboratorio_infraestrutura.id}}" name="edit_quantidade"
+                        class="form-control shadow-sm" value="{{ laboratorio_infraestrutura.quantidade }}">
+                </div>
+
+                <div class="col-md-6 col-sm-12">
+                    <label for="edit_imagem{{laboratorio_infraestrutura.id}}" class="mt-3 fw-bold">Imagens da Infraestrutura</label>
+                    <input type="file" class="form-control" id="edit_imagem{{laboratorio_infraestrutura.id}}" name="edit_imagem" multiple>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary"
+                    onclick="salvarEdicao('{{laboratorio_infraestrutura.id}}')">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+  
+
+  </body>
+
+  </html>
+
+  <style>
+    table {
+      width: 100%;
+    }
+
+    th,
+    td {
+      padding: 5px;
+    }
+
+    th {
+      background-color: #f8f8f8;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #ddd;
+    }
+
+    td img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+
+
+<script>
+function abrirModalEdicao(id) {
+    // Lógica para preencher os campos do modal com os dados atuais da infraestrutura
+    $.ajax({
+        url: '/get_infra_data/',
+        method: 'GET',
+        data: {infra_id: id},
+        success: function(data) {
+            document.getElementById('edit_modelo' + id).value = data.modelo;
+            document.getElementById('edit_finalidade' + id).value = data.finalidade;
+            document.getElementById('edit_tombo' + id).value = data.tombo;
+            document.getElementById('edit_quantidade' + id).value = data.quantidade;
+
+            // Adicione lógica para preencher os campos de equipamento e marca
+            var equipamentoSelect = document.getElementById('edit_equipamento' + id);
+            var marcaSelect = document.getElementById('edit_marca' + id);
+
+            // Defina o valor selecionado no campo de equipamento
+            for (var i = 0; i < equipamentoSelect.options.length; i++) {
+                if (equipamentoSelect.options[i].value == data.equipamento_id) {
+                    equipamentoSelect.options[i].selected = true;
+                    break;
+                }
+            }
+
+            // Defina o valor selecionado no campo de marca
+            for (var i = 0; i < marcaSelect.options.length; i++) {
+                if (marcaSelect.options[i].value == data.marca_id) {
+                    marcaSelect.options[i].selected = true;
+                    break;
+                }
+            }
+
+            // Abrir o modal de edição
+            $('#editModal' + id).modal('show');
+        },
+        error: function(error) {
+            console.log('Erro ao obter dados da infraestrutura:', error);
+        }
+    });
+}
+
+
+  function salvarEdicao(id) {
+    var equipamento_id = document.getElementById('edit_equipamento' + id).value;
+    var marca_id = document.getElementById('edit_marca' + id).value;
+
+    var modelo = document.getElementById('edit_modelo' + id).value;
+    var finalidade = document.getElementById('edit_finalidade' + id).value;
+    var tombo = document.getElementById('edit_tombo' + id).value;
+    var quantidade = document.getElementById('edit_quantidade' + id).value;
+
+    // Obtenha o token CSRF do cookie
+    var csrftoken = document.cookie.match(/csrftoken=([\w-]+)/)[1];
+
+    // Crie um objeto FormData para lidar com o upload de arquivos
+    var formData = new FormData();
+    formData.append('infra_id', id);
+    formData.append('edit_equipamento', equipamento_id);
+    formData.append('edit_marca', marca_id);
+
+    formData.append('modelo', modelo);
+    formData.append('finalidade', finalidade);
+    formData.append('tombo', tombo);
+    formData.append('quantidade', quantidade);
+
+    // Obtenha o campo de arquivo
+    var imagemInput = document.getElementById('edit_imagem' + id);
+
+    // Adicione cada arquivo ao FormData, se algum arquivo for selecionado
+    if (imagemInput.files.length > 0) {
+        formData.append('edit_imagem', imagemInput.files[0]);
+    }
+
+    $.ajax({
+        url: '/salvar_edicao_infra/',
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken
+        },
+        processData: false, // Não processar dados para permitir o FormData
+        contentType: false, // Não defina o tipo de conteúdo para permitir o FormData
+        data: formData,
+        success: function(data) {
+            if (data.success) {
+                // Sucesso ao salvar, recarregar a página
+                location.reload();
+            } else {
+                console.log('Erro ao salvar edição:', data.error);
+            }
+        },
+        error: function(error) {
+            console.log('Erro ao salvar edição:', error);
+        }
+    });
+}
+
+
+
+
+
+
+
+
+</script>

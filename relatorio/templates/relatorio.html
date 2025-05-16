@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+    <!-- Adicione seus estilos CSS aqui -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Relatórios</h1>
+    
+    <!-- Tabela de Exemplo 1 -->
+    <h2>Relatório de Vendas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Preço Unitário</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Linhas de dados aqui -->
+            <tr>
+                <td>01/01/2024</td>
+                <td>Produto A</td>
+                <td>100</td>
+                <td>R$ 10,00</td>
+                <td>R$ 1.000,00</td>
+            </tr>
+            <!-- Adicione mais linhas conforme necessário -->
+        </tbody>
+    </table>
+    
+    <!-- Tabela de Exemplo 2 -->
+    <h2>Relatório de Clientes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Endereço</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Linhas de dados aqui -->
+            <tr>
+                <td>João Silva</td>
+                <td>joao@example.com</td>
+                <td>(00) 1234-5678</td>
+                <td>Rua A, 123</td>
+            </tr>
+            <!-- Adicione mais linhas conforme necessário -->
+        </tbody>
+    </table>
+    
+    <!-- Botão para Exportar -->
+    <a href="#" class="btn">Exportar para Excel</a>
+</div>
+
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório na Tela</title>
+</head>
+<body>
+    <h1>Relatório de Laboratórios</h1>
+    {% for laboratorio in laboratorios %}
+    <div>
+        <h2>Nome do Laboratório: {{ laboratorio.nome_laboratorio }}</h2>
+        <p>Responsável: {{ laboratorio.responsavel }}</p>
+        <p>Email: {{ laboratorio.email }}</p>
+        <p>Telefone: {{ laboratorio.telefone }}</p>
+        <h3>Unidades Acadêmicas:</h3>
+        <ul>
+            {% for unidade in laboratorio.unidades_academicas.all %}
+            <li>
+                <p>Unidade Acadêmica: {{ unidade }}</p>
+                <p>Apresentação: {{ unidade.texto_ajustavel }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+</body>
+</html>

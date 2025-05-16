@@ -1,0 +1,183 @@
+{% load static %}
+{% include 'parciais/head.html' %}
+{% include 'parciais/navbar.html' %}
+{% include 'parciais/ferramentas.html' %}
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-sm-12">
+      <div class="card rounded">
+        <div class="card-header">
+          <h2 class="text-center">Parcerias e Fomentos</h2>
+        </div>
+
+        <div class="card-body m-2">
+          {% if formentos %}
+          <ul class="list-group">
+            {% for formento in formentos %}
+            <li class="list-group-item border rounded-0 p-2 mb-1">
+              <p class="m-0 mt-1"><span class="card-title"> Nome do Parceiro:</span> {{ formento.nomedoparceito }}
+              </p>
+              <p class="m-0 mt-1"><span class="card-title"> Modalidade:</span> {{ formento.selecao }}</p>
+              
+              <p class="m-0 mt-1"><span class="card-title"> Nome do Edital ou chamada Pública</span> {{ formento.edital }}</p>
+              <p class="m-0 mt-1"><span class="card-title"> Número do Registro.</span> {{ formento.numerodoformento }}</p>
+              <p class="m-0 mt-1"><span class="card-title"> Tipo:</span> {{ formento.tipo }}</p>
+              <!-- Adicione outros campos conforme necessário -->
+
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-primary editar-formento"
+                  data-bs-target="#modal-editar-formento" data-bs-toggle="modal">Editar</button>
+
+                <form method="POST" action="{% url 'excluir_formento' formento.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+                </form>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p>Nenhum formento encontrado para este laboratório.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 col-sm-12">
+      <div class="card rounded">
+        <div class="card-header">
+          <h2 class="text-center">Adicionar</h2>
+        </div>
+        <div class="card-body">
+          <form method="POST">
+            {% csrf_token %}
+
+            <div class="row">
+              <!-- Adicione os campos do formulário para adicionar um novo formento -->
+
+              <div class="col-12">
+                <label class="fw-bold" for="nome_for">Nome do Registro</label>
+                <input type="text" class="form-control shadow-sm" id="nome_formento" name="nomedoparceito" required>
+              </div>
+
+                     <div class="mb-2 col-md-6 col-sm-12">
+            <label class="fw-bold" for="selecao">Modalidade</label>
+            <select class="form-select shadow-sm" id="selecao" name="selecao" required>
+                <option value="" selected disabled hidden>Selecione</option>
+                <option value="empresa">Empresa</option>
+                <option value="instituicao_ensino">Instituição de Ensino Superior</option>
+                <option value="centro_pesquisa">Centro de Pesquisa</option>
+                <option value="agência_de_fomento">Agência de Fomento</option>
+            </select>
+        </div>
+
+
+              <div class="mb-2 col-md-6 col-sm-12">
+              <label class="fw-bold " for="tipo">Tipo</label>
+              
+              <select class="form-select shadow-sm" id="tipo" name="tipo" required>
+                <option value="" selected disabled hidden>Selecione</option>
+                <option value="fomento">Fomento</option>
+                <option value="parceria">Parceria</option>
+               
+              </select>
+            </div>
+              <!-- Adicione outros campos conforme necessário -->
+
+                
+                <div class="col-12">
+                    <label class="fw-bold" for="numerodoformento">Número do registro</label>
+                    <input class="form-control" name="numerodoformento" value="{% if formento.numerodoformento %}{{ formento.numerodoformento }}{% endif %}" />
+                </div>
+                <div class="col-12">
+                    <label class="fw-bold" for="edital">Nome do Edital ou chamada Pública</label>
+                    <input class="form-control" name="edital" value="{% if formento.edital %}{{ formento.edital }}{% endif %}" />
+                </div>
+            
+            </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary mt-3" name="adicionar_formento">Adicionar
+                    </button>
+                </div>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for formento in formentos %}
+<div class="modal fade" id="modal-editar-formento" tabindex="-1" role="dialog"
+  aria-labelledby="editarFormentoLabel{{ formento.id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editarFormentoLabel{{ formento.id }}">Editar </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulário de edição das informações do Formento -->
+        <form method="POST" action="{% url 'editar_formento' laboratorio_id=laboratorio.id formento_id=formento.id %}">
+          {% csrf_token %}
+
+          <!-- Campos para editar as informações do Formento -->
+          <div class="row">
+
+            <div class="mb-2 col-md-6 col-sm-12">
+              <label class="fw-bold" for="nome_formento">Nome do Parceiro</label>
+              <input type="text" class="form-control" id="nome_formento" name="nomedoparceito"
+                placeholder="{{ formento.nomedoparceito }}" value="{{ formento.nomedoparceito }}" required>
+            </div>
+
+
+            <!-- Adicione outros campos conforme necessário -->
+          
+            <div class="mb-2 col-md-6 col-sm-12">
+              <label class="fw-bold" for="edital">Edital</label>
+              <input type="text" class="form-control" id="edital" name="edital" placeholder="{{ formento.edital }}"
+                value="{{ formento.edital }}">
+            </div>
+
+            <div class="mb-2 col-md-6 col-sm-12">
+              <label class="fw-bold" for="selecao">Seleção</label>
+              <select class="form-select" id="selecao" name="selecao" required>
+                  <option value="empresa" {% if formento.selecao == 'empresa' %}selected{% endif %}>Empresa</option>
+                  <option value="instituicao_ensino" {% if formento.selecao == 'instituicao_ensino' %}selected{% endif %}>Instituição de Ensino Superior</option>
+                  <option value="centro_pesquisa" {% if formento.selecao == 'centro_pesquisa' %}selected{% endif %}>Centro de Pesquisa</option>
+              </select>
+          </div>
+            <div class="mb-2 col-md-6 col-sm-12">
+              <label class="fw-bold" for="numerodoformento">Número</label>
+              <input type="text" class="form-control" id="numerodoformento" name="numerodoformento"
+                placeholder="{{ formento.numerodoformento }}" value="{{ formento.numerodoformento }}">
+            </div>
+          </div>
+          <div class="mb-2 col-md-6 col-sm-12">
+  <label class="fw-bold" for="tipo">Tipo</label>
+  <select class="form-select" id="tipo" name="tipo" required>
+    <option value="" selected disabled hidden>Selecione</option>
+    <option value="Parceria" {% if formento.tipo == 'Parceria' %}selected{% endif %}>Parceria</option>
+    <option value="Fomento" {% if formento.tipo == 'Fomento' %}selected{% endif %}>Fomento</option>
+  </select>
+</div>
+
+          <!-- Botão para salvar as edições -->
+          <button type="submit" class="btn btn-primary" name="salvar_edicao_formento">Salvar Edições</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% include 'parciais/footer.html'%}
+<!-- Adicione o script jQuery para sugestões de nomes, se necessário -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  // Adicione o código jQuery, se necessário
+</script>
+</body>
+
+</html>

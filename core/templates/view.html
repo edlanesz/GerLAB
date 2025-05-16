@@ -1,0 +1,766 @@
+{% load static %}
+{% include 'parciais/head.html' %}
+
+<style type="text/css" media="print">
+/* Estilos gerais */
+@page {
+    size: A4;
+    margin: 0mm;
+}
+
+body {
+    font-size: 12px;
+}
+
+@media print {
+    footer {
+        display: none !important; /* Oculta o rodapé durante a impressão */
+    }
+
+    .btn:not(.print-btn),
+    .btn-print-only,
+    .print-btn {
+        display: none !important; /* Oculta os botões que não devem aparecer na impressão */
+    }
+
+    .navbar {
+        display:block !important;
+    }
+    .navbar-gov-container {
+        display:block !important;
+    }
+}
+
+
+
+.container {
+    width: 100%;
+}
+
+.card {
+    page-break-inside: avoid;
+}
+
+.card-body p,
+.card-body h5,
+.card-body ul,
+.card-body li {
+    margin-bottom: 1px; /* Reduzindo o espaçamento entre os elementos */
+}
+
+.card-body p,
+.card-body h5,
+.card-body ul,
+.card-body li {
+    font-size: 10px; /* Reduzindo o tamanho da fonte */
+}
+
+.col-md-6 {
+    padding-right: 2px;
+    padding-left: 2px;
+}
+
+.card-body {
+    line-height: 1;
+}
+
+.card-body table {
+    font-size: 8px; /* Reduz o tamanho da fonte da tabela ao imprimir */
+    width: 100%; /* Garante que a tabela ocupa 100% da largura da página ao imprimir */
+}
+
+.card-body td {
+    padding: 2px; /* Ajusta o preenchimento das células da tabela ao imprimir */
+}
+
+.card-body a {
+    font-size: 8px; /* Reduz o tamanho da fonte dos links ao imprimir */
+}
+
+.card-body .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.card-body .col-md-6 {
+    width: 48%; /* Ajuste conforme necessário para dar espaço suficiente entre as colunas */
+    box-sizing: border-box;
+}
+
+.card-body h5 {
+    margin-top: 5px;
+    margin-bottom: 2px;
+    font-weight: bold; /* Adicionando negrito */
+}
+
+.card-body p {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.text-center {
+    flex: 1; /* Para ocupar o espaço disponível */
+    text-align: center; /* Para centralizar o texto */
+}
+
+
+</style>
+
+
+
+
+<style>
+   .text-center {
+   flex: 1; /* Para ocupar o espaço disponível */
+   text-align: center; /* Para centralizar o texto */
+   }
+
+
+   /* CSS para mostrar apenas durante a impressão */
+@media print {
+    .print-onlyy2 {
+        display: block !important;
+    }
+}
+
+/* Esconda durante a exibição na tela */
+@media screen {
+    .print-onlyy2 {
+        display: none !important;
+    }
+}
+
+   #print-footer {
+    text-align: center;
+}
+
+
+
+
+</style>
+
+<body>
+
+
+   {% include 'parciais/navbar.html'%}
+
+
+
+
+
+
+   <div class="container">
+   <div class="row">
+   <div class="col-md-12">
+   <div class="card mt-4">
+      <div class="card-header">
+
+         <div class="d-flex justify-content-between align-items-center">
+            <h3>Informações do Laboratório</h3>
+            <div class="d-flex">
+               <button onclick="printPage()" class="btn btn-primary print-btn">
+               <i class="bi bi-printer d-inline-block align-middle"></i>
+               </button>
+               <a href="{% url 'editar_laboratorio' laboratorio_id=laboratorio.id imagem_id=0 %}" class="ml-2 ms-2 btn btn-primary print-only">Editar Laboratório <i class="bi bi-pen"></i></a>
+            </div>
+         </div>
+      </div>
+      <div class=" bg-default">
+         <!-- Aqui você pode adicionar os links para edição ou download, se necessário -->
+      </div>
+      <div class="card-body position-relative">
+         <div class="row">
+            <div class="col-md-8 order-md-1 order-1">
+               <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                  <div class="carousel-indicators">
+                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                  </div>
+                  <div class="carousel-inner">
+                     {% for imagem in laboratorio.imagens.all %}
+                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ imagem.imagem.url }}" class="d-block w-100" style="max-height: 400px;" alt="...">
+                     </div>
+                     {% endfor %}
+                  </div>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                  </button>
+               </div>
+            </div>
+            <div class="col-md-4 order-md-1 order-2 d-flex align-items-center justify-content-center">
+               <div style="max-width: 100%; max-height: 400px;  padding: 10px;">
+                  {% if laboratorio.aprovado %}
+                  <!-- Laboratório Aprovado -->
+                  <img src="{% static 'images/CARIMBO APROVADO.png' %}" alt="Laboratório Aprovado" class="img-fluid d-none d-md-block">
+                  <!-- Oculta em telas menores -->
+                  <img src="{% static 'images/CARIMBO APROVADO.png' %}" alt="Laboratório Aprovado" class="img-fluid d-md-none" style="max-height: 200px;">
+                  <!-- Tamanho ajustado em telas menores -->
+                  {% else %}
+                  <!-- Laboratório Não Aprovado -->
+                  <img src="{% static 'images/CARIMBO REPROVADO.png' %}" alt="Laboratório Não Aprovado" class="img-fluid d-none d-md-block">
+                  <!-- Oculta em telas menores -->
+                  <img src="{% static 'images/CARIMBO REPROVADO.png' %}" alt="Laboratório Não Aprovado" class="img-fluid d-md-none" style="max-height: 200px;">
+                  <!-- Tamanho ajustado em telas menores -->
+                  {% endif %}
+               </div>
+            </div>
+         </div>
+         <div class="row mt-2">
+             <!-- Dentro do seu arquivo HTML -->
+            <div id="print-footer" class="mt-4 print-onlyy2">
+                <p class="mb-0">
+                    <strong>Endereço para acessar este espelho:</strong>
+                    <a href="https://dirlab.uea.edu.br/publico/view/{{ laboratorio.id }}" target="_blank">
+                        https://dirlab.uea.edu.br/publico/view/{{ laboratorio.id }}
+                    </a>
+                    <br><br>
+                </p>
+            </div>
+            <div class="col-md-6">
+               <h5>Nome do Laboratório</h5>
+               <p class="card-title"> {{ laboratorio.nome_laboratorio|default_if_none:'' }}</p>
+               <h5>Responsável</h5>
+               <p class="card-title"> {{ laboratorio.responsavel|default_if_none:'' }}</p>
+               <h5>Email</h5>
+               <p class="card-title"> {{ laboratorio.email|default_if_none:'' }}</p>
+               <h5>Unidade:</h5>
+               <p>{{laboratorio.unidade}}</p>
+            </div>
+            <div class="col-md-6">
+               <h5>Link do PNIPE</h5>
+               <p class="card-title"> <a href=" {{ laboratorio.link_pnipe|default_if_none:'' }}" target="_blank">{{ laboratorio.link_pnipe|default_if_none:'' }}</a></p>
+               </a>
+               <h5>Telefone</h5>
+               <p class="card-title"> {{ laboratorio.telefone|default_if_none:'' }}</p>
+               <h5>Website do Laboratório</h5>
+<p class="card-title"><a href="{{ laboratorio.site|default_if_none:'' }}" target="_blank">{{ laboratorio.site|default_if_none:'' }}</a></p>
+               <h5>Endereço completo:</h5>
+               <p>{{ laboratorio.funcionamento }}, {{ laboratorio.rua }}, {{ laboratorio.numero_rua }},{{ laboratorio.bairro }}, CEP: {{ laboratorio.cep }} Andar: {{ laboratorio.andar }}</p>
+               <h5>Data de Atualização</h5>
+               <p class="card-title">{{ data_atualizacao }}</p>
+            </div>
+         </div>
+         <!-- Adicione aqui a exibição da imagem de aprovação -->
+         <!-- Adicione aqui outras informações relevantes da infraestrutura -->
+      </div>
+   </div>
+  <div class="card mt-4 text-center">
+    <div class="card-header text-center">
+        <div class="d-flex text-center">
+            <h3 class="mx-auto">Informações de Infraestrutura</h3>
+            <button id="toggleInfraButton" class="btn btn-primary"><i class="bi bi-caret-down"></i></button>
+        </div>
+    </div>
+    <div class="card-body table-responsive" id="infraInfo">
+        {% if infraestruturas %}
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Equipamento</th>
+                    <th>Finalidade</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Tombo</th>
+                    <th>Quantidade</th>
+                    <th>Imagem</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for laboratorio_infraestrutura in infraestruturas %}
+                <tr>
+                    <td>
+                        {% if laboratorio_infraestrutura.status == True %}
+                        <div class="status bg-warning rounded-circle"></div>
+                        {% elif laboratorio_infraestrutura.status == False %}
+                        <div class="status bg-warning-2 rounded-circle"></div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <strong></strong> {{ laboratorio_infraestrutura.equipamento.nome_equipamento }}
+                        <br>
+                    </td>
+                    <td>
+                        <strong></strong> {{ laboratorio_infraestrutura.finalidade|default_if_none:'' }}
+                        <br>
+                    </td>
+                    <td>
+                        <strong></strong> {{ laboratorio_infraestrutura.marca.nome_marca }}
+                        <br>
+                    </td>
+                    <td>
+                        <strong></strong> {{ laboratorio_infraestrutura.modelo }}
+                        <br>
+                    </td>
+                    <td>
+                        <strong></strong> {{ laboratorio_infraestrutura.tombo }}
+                        <br>
+                    </td>
+                    <td>
+                        <strong></strong> {{ laboratorio_infraestrutura.quantidade }}
+                        <br>
+                    </td>
+                    <td>
+                        <strong></strong>
+                        <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModalImage{{ laboratorio_infraestrutura.id }}">
+                            <i class="bi bi-images"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Nenhuma infraestrutura encontrada para este laboratório.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% for laboratorio_infraestrutura in infraestruturas %}
+<!-- Modal para cada infraestrutura -->
+<div class="modal fade" id="exampleModalImage{{ laboratorio_infraestrutura.id }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ laboratorio_infraestrutura.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel{{ laboratorio_infraestrutura.id }}">Imagens do Equipamento</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="carouselExampleIndicators{{ laboratorio_infraestrutura.id }}" class="carousel slide w-100" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        {% for imagem in laboratorio_infraestrutura.imagens_infraestrutura.all %}
+                        <button type="button" data-bs-target="#carouselExampleIndicators{{ laboratorio_infraestrutura.id }}" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
+                        {% endfor %}
+                    </div>
+                    <div class="carousel-inner">
+                        {% for imagem in laboratorio_infraestrutura.imagens_infraestrutura.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ imagem.imagem.url }}" alt="{{ imagem.descricao }}" title="{{ imagem.titulo }}" width="450">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators{{ laboratorio_infraestrutura.id }}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators{{ laboratorio_infraestrutura.id }}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+   <div class="card mt-4">
+      <div class="card-header">
+         <div class="d-flex justify-content-between align-items-center">
+            <div class="text-center">
+               <h3>Membros do Laboratório</h3>
+            </div>
+            <button id="toggleMembersButton" class="btn btn-primary"><i class="bi bi-caret-down"></i></button>
+         </div>
+      </div>
+      <div class="card-body" id="membersCardBody">
+         {% if membros %}
+         <div class="table-responsive">
+            <table class="table table-striped table-hover text-center">
+               <thead>
+                  <tr>
+                     <th>Nome do Membro</th>
+                     <th>Função do Membro</th>
+                     <th>Currículo Lattes</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {% for membro in membros %}
+                  <tr>
+                     <td>{{ membro.nome_membro }}</td>
+                     <td>{{ membro.funcao }}</td>
+                     <td>{{ membro.curriculo_lattes }}</td>
+                  </tr>
+                  {% endfor %}
+               </tbody>
+            </table>
+         </div>
+         {% else %}
+         <p class="text-center">Nenhum membro encontrado no laboratório.</p>
+         {% endif %}
+      </div>
+   </div>
+   <div class="card mt-4">
+      <div class="card-header">
+         <div class="d-flex justify-content-between align-items-center">
+            <div class="text-center">
+               <h3>Parcerias e Fomentos</h3>
+            </div>
+            <button id="toggleFomentosButton" class="btn btn-primary"><i class="bi bi-caret-down"></i></button>
+         </div>
+      </div>
+      <div class="card-body" id="fomentosCardBody">
+         {% if formento %}
+         <div class="table-responsive text-center">
+            <table class="table table-striped table-hover">
+               <thead>
+                  <tr>
+                     <th>Nome do Fomento</th>
+                     <th>Número do Fomento</th>
+                     <th>Tipo</th>
+                     <th>Modalidade</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {% for fomento in formento %}
+                  <tr>
+                     <td>{{ fomento.nomedoparceito }}</td>
+                     <td>{{ fomento.numerodoformento }}</td>
+                     <td>{{ fomento.tipo }}</td>
+                     <td>{{ fomento.selecao }}</td>
+                  </tr>
+                  {% endfor %}
+               </tbody>
+            </table>
+         </div>
+         {% else %}
+         <p class="text-center">Nenhum fomento encontrado.</p>
+         {% endif %}
+      </div>
+   </div>
+   <div class="col-12">
+      <div class="row">
+         <div class="col-md-6">
+            <div class="card mt-4 text-center">
+               <div class="card-header text-center">
+                  <div class="d-flex justify-content-center align-items-center">
+                     <h3 class="m-auto">Projetos</h3>
+                     <!-- Utilize a classe m-auto para centralizar horizontalmente -->
+                     <button id="toggleProjectsButton" class="btn btn-primary"><i class="bi bi-caret-down"></i></button>
+                  </div>
+               </div>
+               <div class="card-body" id="projectsCardBody">
+                  <ul class="list-group mt-4">
+                     {% for projeto in projetos %}
+                     <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                           <div class="fw-bold cursor-pointer" onclick="toggleDetails('{{ projeto.id }}')">
+                              {{ projeto.nome_projeto }}
+                           </div>
+                           <button id="toggleButton{{ projeto.id }}" class="btn btn-light btn-sm" onclick="toggleDetails('{{ projeto.id }}')">
+                           <i class="bi bi-caret-down"></i>
+                           </button>
+                        </div>
+                        <!-- Detalhes do projeto -->
+                        <div id="details{{ projeto.id }}" class="details" style="display: none;">
+                           <p><strong>Docente Responsável:</strong> {{ projeto.docente_responsavel }}</p>
+                           <p><strong>Modalidade:</strong> {{ projeto.modalidade }}</p>
+                           <p><strong>Vigência:</strong> {{ projeto.vigencia_inicio }} - {{ projeto.vigencia_fim }}</p>
+                           <p><strong>Fomento:</strong> {{ projeto.fomento }}</p>
+                            <p><strong>Participantes:</strong></p>
+
+                             <ul>
+                                {% for discente in projeto.get_discentes_list %}
+                                    <li>{{ discente }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                     </li>
+                     {% endfor %}
+                  </ul>
+               </div>
+            </div>
+            <div class="card mt-4">
+               <div class="card-header text-center">
+                  <div class="d-flex justify-content-between align-items-center">
+                     <div class="text-center">
+                        <h3>Programas de Pós-Graduação</h3>
+                     </div>
+                     <button id="toggleProgramsButton" class="btn btn-primary"><i class="bi bi-caret-down"></i></button>
+                  </div>
+               </div>
+               <div class="card-body" id="programsCardBody">
+                  {% if programas %}
+                  <div class="table-responsive text-center">
+                     <table class="table table-striped table-hover">
+                        <thead>
+                           <tr>
+                              <th>Nome do Programa</th>
+                              <th>Website</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           {% for pos in programas %}
+                           <tr>
+                              <td>{{ pos.nome_do_Programa }}</td>
+                              <td>{{ pos.website }}</td>
+                           </tr>
+                           {% endfor %}
+                        </tbody>
+                     </table>
+                  </div>
+                  {% else %}
+                  <p class="text-center">Nenhum programa de pós-graduação encontrado.</p>
+                  {% endif %}
+               </div>
+            </div>
+         </div>
+         <div class="col-md-6 ">
+            <div class="card mt-4 text-center">
+               <div class="card-header text-center">
+                  <div class="d-flex justify-content-between align-items-center">
+                     <div class="text-center">
+                        <h3 class="m-auto">Anexos</h3>
+                        <!-- Utilize a classe m-auto para centralizar horizontalmente -->
+                     </div>
+                     <button id="toggleAttachmentsButton" class="btn btn-primary"><i class="bi bi-caret-down"></i></button>
+                  </div>
+               </div>
+               <div class="card-body" id="attachmentsCardBody">
+                  <div class="row">
+                     <ul class="list-group mb-4 text-center">
+                        <h5>Regimento Interno:</h5>
+                        {% for regimento in regimentos_internos %}
+                        {% if regimento.status == True %}
+                        <li class="list-group-item text-center">
+                           <a href="{% url 'visualizar_regimento_interno' regimento_id=regimento.id %}" class="btn btn-sm btn-link" target="_blank">
+                           <i class="fa fa-file-pdf-o"></i> Visualizar PDF
+                           </a>
+                           {{ regimento }}
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                     </ul>
+                     <ul class="list-group mb-4 text-center">
+                        <h5>Ato de criação :</h5>
+                        {% for unidade_academica in unidades_academicas %}
+                        <li class="list-group-item">
+                           <a href="{% url 'visualizar_pdf' unidade_academica.id %}" class="btn btn-sm btn-link" target="_blank">
+                           <i class="fa fa-file-pdf-o"></i> Visualizar PDF
+                           </a>
+                           {{ unidade_academica }}
+                        </li>
+                        {% endfor %}
+                     </ul>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+
+
+   <div id="print-footer" class="text-center mt-4"></div>
+
+
+
+   {% include 'parciais/footer.html'%}
+</body>
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+         // Adicione aqui os campos restantes do formulário
+      });
+
+      function toggleDetails(projectId) {
+         const details = document.getElementById('details' + projectId);
+         details.style.display = details.style.display === 'none' ? 'block' : 'none';
+      }
+
+       function printPage() {
+         window.print();
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+         // Adicione aqui os campos restantes do formulário
+      });
+
+      function toggleDetails(projectId) {
+         const details = document.getElementById('details' + projectId);
+         details.style.display = details.style.display === 'none' ? 'block' : 'none';
+      }
+
+       document.addEventListener("DOMContentLoaded", function () {
+       const infraInfo = document.getElementById('infraInfo');
+       const toggleInfraButton = document.getElementById('toggleInfraButton');
+
+       // Inicialmente, mostra as informações de infraestrutura
+       infraInfo.style.display = 'block';
+       toggleInfraButton.innerHTML = '<i class="bi bi-caret-up"></i>'; // Ícone indicando que pode ser colapsado
+
+       // Adiciona um ouvinte de evento para o botão de alternância
+       toggleInfraButton.addEventListener('click', function () {
+           if (infraInfo.style.display === 'none') {
+               infraInfo.style.display = 'block';
+               toggleInfraButton.innerHTML = '<i class="bi bi-caret-up"></i>'; // Muda para ícone de "menos" ou "para cima"
+           } else {
+               infraInfo.style.display = 'none';
+               toggleInfraButton.innerHTML = '<i class="bi bi-caret-down"></i>'; // Muda para ícone de "mais" ou "para baixo"
+           }
+       });
+       function toggleDetails(projetoId) {
+           const details = document.getElementById('details' + projetoId);
+           const toggleButton = document.getElementById('toggleButton' + projetoId);
+
+           if (details.style.display === 'none') {
+               details.style.display = 'block';
+               toggleButton.innerHTML = '<i class="bi bi-caret-up"></i>';
+           } else {
+               details.style.display = 'none';
+               toggleButton.innerHTML = '<i class="bi bi-caret-down"></i>';
+           }
+       }
+   });
+
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+       // Seleciona o botão e o conteúdo do corpo do cartão
+       var toggleButton = document.getElementById("toggleMembersButton");
+       var membersCardBody = document.getElementById("membersCardBody");
+
+       // Adiciona um ouvinte de evento de clique ao botão
+       toggleButton.addEventListener("click", function() {
+           // Verifica se o corpo do cartão está visível
+           if (membersCardBody.style.display === "none" || membersCardBody.style.display === "") {
+               // Se estiver oculto, torna visível e altera o ícone do botão para cima
+               membersCardBody.style.display = "block";
+               toggleButton.innerHTML = '<i class="bi bi-caret-up"></i>';
+           } else {
+               // Se estiver visível, oculta e altera o ícone do botão para baixo
+               membersCardBody.style.display = "none";
+               toggleButton.innerHTML = '<i class="bi bi-caret-down"></i>';
+           }
+       });
+   });
+
+   document.addEventListener("DOMContentLoaded", function() {
+       // Seleciona o botão e o conteúdo do corpo do cartão
+       var toggleButton = document.getElementById("toggleFomentosButton");
+       var fomentosCardBody = document.getElementById("fomentosCardBody");
+
+       // Adiciona um ouvinte de evento de clique ao botão
+       toggleButton.addEventListener("click", function() {
+           // Verifica se o corpo do cartão está visível
+           if (fomentosCardBody.style.display === "none" || fomentosCardBody.style.display === "") {
+               // Se estiver oculto, torna visível e altera o ícone do botão para cima
+               fomentosCardBody.style.display = "block";
+               toggleButton.innerHTML = '<i class="bi bi-caret-up"></i>';
+           } else {
+               // Se estiver visível, oculta e altera o ícone do botão para baixo
+               fomentosCardBody.style.display = "none";
+               toggleButton.innerHTML = '<i class="bi bi-caret-down"></i>';
+           }
+       });
+   });
+
+
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+       // Seleciona o botão e o conteúdo do corpo do cartão
+       var toggleButton = document.getElementById("toggleProjectsButton");
+       var projectsCardBody = document.getElementById("projectsCardBody");
+
+       // Adiciona um ouvinte de evento de clique ao botão
+       toggleButton.addEventListener("click", function() {
+           // Verifica se o corpo do cartão está visível
+           if (projectsCardBody.style.display === "none" || projectsCardBody.style.display === "") {
+               // Se estiver oculto, torna visível e altera o ícone do botão para cima
+               projectsCardBody.style.display = "block";
+               toggleButton.innerHTML = '<i class="bi bi-caret-up"></i>';
+           } else {
+               // Se estiver visível, oculta e altera o ícone do botão para baixo
+               projectsCardBody.style.display = "none";
+               toggleButton.innerHTML = '<i class="bi bi-caret-down"></i>';
+           }
+       });
+   });
+
+
+
+     document.addEventListener("DOMContentLoaded", function() {
+       // Seleciona o botão e o conteúdo do corpo do cartão
+       var toggleButton = document.getElementById("toggleProgramsButton");
+       var programsCardBody = document.getElementById("programsCardBody");
+
+       // Adiciona um ouvinte de evento de clique ao botão
+       toggleButton.addEventListener("click", function() {
+           // Verifica se o corpo do cartão está visível
+           if (programsCardBody.style.display === "none" || programsCardBody.style.display === "") {
+               // Se estiver oculto, torna visível e altera o ícone do botão para cima
+               programsCardBody.style.display = "block";
+               toggleButton.innerHTML = '<i class="bi bi-caret-up"></i>';
+           } else {
+               // Se estiver visível, oculta e altera o ícone do botão para baixo
+               programsCardBody.style.display = "none";
+               toggleButton.innerHTML = '<i class="bi bi-caret-down"></i>';
+           }
+       });
+   });
+
+
+   document.addEventListener("DOMContentLoaded", function() {
+       // Seleciona o botão e o conteúdo do corpo do cartão
+       var toggleButton = document.getElementById("toggleAttachmentsButton");
+       var attachmentsCardBody = document.getElementById("attachmentsCardBody");
+
+       // Adiciona um ouvinte de evento de clique ao botão
+       toggleButton.addEventListener("click", function() {
+           // Verifica se o corpo do cartão está visível
+           if (attachmentsCardBody.style.display === "none" || attachmentsCardBody.style.display === "") {
+               // Se estiver oculto, torna visível e altera o ícone do botão para cima
+               attachmentsCardBody.style.display = "block";
+               toggleButton.innerHTML = '<i class="bi bi-caret-up"></i>';
+           } else {
+               // Se estiver visível, oculta e altera o ícone do botão para baixo
+               attachmentsCardBody.style.display = "none";
+               toggleButton.innerHTML = '<i class="bi bi-caret-down"></i>';
+           }
+       });
+   });
+
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Função para obter a data atual no formato desejado (DD/MM/YYYY, HH:MM)
+    function getCurrentDateTime() {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('pt-BR');
+        const formattedTime = now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+        return formattedDate + ', ' + formattedTime;
+    }
+
+    // Atualiza o rodapé com a data atual no momento da impressão
+    function updatePrintFooter() {
+        const printFooter = document.createElement('div');
+        printFooter.innerHTML = 'Data da impressão: ' + getCurrentDateTime();
+        printFooter.classList.add('text-center');
+        printFooter.style.position = 'fixed';
+        printFooter.style.bottom = '20px'; // Ajuste a distância do rodapé conforme necessário
+        printFooter.style.width = '100%';
+        document.body.appendChild(printFooter);
+    }
+
+    // Adiciona um ouvinte de evento para a função de atualização do rodapé ao imprimir a página
+    window.addEventListener('beforeprint', updatePrintFooter);
+});
+
+
+
+   document.addEventListener("DOMContentLoaded", function () {
+     const button = document.querySelector(".navbar-toggler");
+     const navbar = document.querySelector("#navbarSupportedContent");
+
+     button.addEventListener("click", function () {
+       navbar.classList.toggle("show"); // Adicione ou remova a classe 'show' para expandir ou recolher a barra de navegação
+     });
+   });
+
+
+</script>

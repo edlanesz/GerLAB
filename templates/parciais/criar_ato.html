@@ -1,0 +1,105 @@
+{% load static %}
+{% include 'parciais/head.html'%}
+<style>
+    .form-check-label {
+        margin-left: 10px;
+    }
+</style>
+
+<body>
+
+    <form action="{% url 'salvar_laboratorio' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="container">
+            <div class="row justify-content-center p-4">
+
+                <section class="rounded" id="formulario_autoridade">
+
+                    <div class="row gap-1">
+                        <h5 class="titulo">Laboratório</h5>
+
+                        <input class="form-control" placeholder="Nome do laboratório" name="nome_laboratorio">
+
+                        <input type="text" id="responsavel" name="responsavel" class="form-control shadow-sm" placeholder="Responsável do Laboratório (Digite e selecione o nome)">
+                        <ul id="responsavel-list" class="list-group"></ul>
+
+                        <textarea rows="3" class="form-control" placeholder="Descrição do laboratório" name="descricao"></textarea>
+
+                        <!-- Campo oculto apenas para USER_LDAP -->
+                        <input type="hidden" id="user_ldap_responsavel" name="user_ldap_responsavel" value="">
+
+                        <input class="form-control" placeholder="E-mail" name="email">
+                        <input class="form-control" placeholder="Telefone" name="telefone">
+
+                        <!-- Upload de PDF -->
+                        <div class="form-group">
+                            <label for="pdf_unidade_academica">Ato de criação: </label>
+                            <input type="file" name="pdf_unidade_academica" id="pdf_unidade_academica" accept=".pdf" required>
+                        </div>
+
+                        <!-- Botão de envio -->
+                        <button id="botao_proximo" type="submit" class="btn btn-success float-right">
+                            Salvar
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script>
+        $(function () {
+            function mostrarListaResponsaveis() {
+                var term = $("#responsavel").val();
+                if ($("#responsavel").is(":focus") && term.length >= 2) {
+                    $.ajax({
+                        url: "/buscar_nomes/",
+                        type: "GET",
+                        data: { term: term },
+                        dataType: "json",
+                        success: function (data) {
+                            console.log("DEBUG: Dados recebidos:", data);
+                            $("#responsavel-list").empty();
+                            data.forEach(function (item) {
+                                var listItem = $("<li>", {
+                                    class: "list-group-item",
+                                    text: item.label,
+                                });
+                                listItem.on("click", function (event) {
+                                    event.stopPropagation();
+                                    $("#responsavel").val(item.label);
+                                    $("#user_ldap_responsavel").val(item.user_ldap);
+                                    $("#responsavel-list").empty();
+                                });
+                                $("#responsavel-list").append(listItem);
+                            });
+                        }
+                    });
+                } else {
+                    $("#responsavel-list").empty();
+                }
+            }
+
+            $("#responsavel").on("input", function () {
+                mostrarListaResponsaveis();
+            });
+
+            $(document).on("click", function (event) {
+                if (!$(event.target).closest("#responsavel-list").length &&
+                    !$(event.target).is("#responsavel")) {
+                    $("#responsavel-list").empty();
+                }
+            });
+        });
+    </script>
+
+</body>

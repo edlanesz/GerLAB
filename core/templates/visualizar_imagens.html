@@ -1,0 +1,16 @@
+<!-- No arquivo visualizar_imagens.html -->
+
+
+
+{% block content %}
+<h1>Visualização de Imagens</h1>
+<h2>Laboratório: {{ laboratorio.nome_laboratorio }}</h2>
+
+{% for imagem in imagens %}
+  <div class="imagem">
+    <img src="{% url 'view_imagem' imagem.id %}" alt="Imagem do Laboratório">
+  </div>
+{% empty %}
+  <p>Nenhuma imagem disponível.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,72 @@
+https://jquery.com/download/
+
+
+https://blog.jquery.com/2022/08/26/jquery-3-6-1-maintenance-release/
+
+
+jQuery 3.6.1 Versão de Manutenção
+Postado em 26 de agosto de 2022 por Timmy Willison
+
+jQuery 3.6.1 foi lançado! Já faz um tempo desde o nosso lançamento anterior. Estávamos procurando corrigir alguns casos de borda indescritíveis relacionados ao foco e desfoque, mas nunca conseguimos a correção certa. Se houver alguma área do jQuery que seja difícil de mudar, provavelmente está relacionada ao foco de alguma forma. Estamos deixando-os como estão por enquanto e vamos abordá-los no futuro, especialmente porque as alterações podem acabar garantindo o lançamento de uma versão principal. Consulte gh-4856 e gh-4950 para obter mais detalhes.
+
+Dito isso, esta versão ainda vem com algumas correções importantes, detalhadas abaixo.
+
+Como de costume, o lançamento está disponível em nosso cdn e no gerenciador de pacotes npm. Outros CDNs de terceiros provavelmente também o terão em breve, mas lembre-se de que não controlamos seus cronogramas de lançamento e eles precisarão de algum tempo. Aqui estão os destaques do jQuery 3.6.1:
+Melhorias de infraestrutura
+
+Fizemos muito trabalho nesta versão para atualizar alguns de nossos testes e construir infraestrutura, incluindo migrar CI do Travis CI para GitHub Actions, testar no Node 16 em vez do Node 15, carregar nosso listener de teste em https e adicionar mais testes precisos para compilações personalizadas. Também removemos alguns links antigos de comentários em alguns arquivos no repositório. Esses links eram para URLs que já foram comprometidos. Embora esses arquivos nunca tenham sido distribuídos em uma versão, eles ainda existiam na fonte do GitHub e foram removidos.
+Sem perder o foco
+
+Ainda há uma correção relacionada ao foco nesta versão. Nosso tratamento de evento especial para foco permaneceu anexado mesmo depois que os manipuladores de foco do jQuery foram removidos, o que quebrou todos os gatilhos de foco manual subsequentes. Por exemplo,
+
+$elem.on("foco", function() {}).off("foco").trigger("foco");
+
+não acionaria o foco.
+Ignorando falsey em addClass( array )
+
+Sem qualquer aumento de tamanho, adicionamos suporte para pular quaisquer valores falsey em uma matriz passada para addClass ou removeClass.
+
+Isso torna o código como:
+
+elem.addClass([ "a", "", "b" ]);
+
+adicione ambas as classes a e b.
+Alinhando com a especificação para valores de propriedade CSS personalizados
+
+Uma alteração na especificação CSS requer que as propriedades personalizadas sejam cortadas. O espaço em branco agora é cortado para valores de propriedade CSS personalizados. Antes, algo como --prop: value ; manteria os espaços à esquerda e à direita no valor, retornando ” valor “.
+Anexando scripts com comentários HTML
+
+Foi descoberto um problema com nossa regex que remove os comentários HTML dos scripts quando eles são anexados, o que acabou removendo partes do script executável em certos casos extremos. Felizmente, nossa correção foi confiar mais nos navegadores, mas ainda precisamos remover as seções CDATA para o IE na ramificação 3.x. Isso será removido em 4.0.
+Um aumento de desempenho para jQuery.trim
+
+Embora jQuery.trim já tenha sido removido da ramificação principal em favor do String#trim nativo em preparação para o próximo grande lançamento, ainda é necessário na ramificação 3.x para alguns navegadores suportados pela ramificação, como o Android 4.0. Havia certos casos de borda que eram incrivelmente lentos devido à estrutura do nosso regex. Desde então, isso foi alterado e a aceleração é significativa.
+Atualizando
+
+Não esperamos problemas de compatibilidade ao atualizar de uma versão jQuery 3.0+. Para atualizar, dê uma olhada no novo Guia de Atualização 3.5. Se você ainda não atualizou para o jQuery 3+, primeiro dê uma olhada no Guia de Atualização 3.0.
+
+O plugin jQuery Migrate ajudará você a identificar problemas de compatibilidade em seu código. Experimente esta nova versão e informe-nos sobre quaisquer problemas que tenha enfrentado.
+
+Se você ainda não pode atualizar para 3.5+, Daniel Ruf gentilmente forneceu patches para versões anteriores do jQuery.
+Download
+
+Você pode obter os arquivos do jQuery CDN ou vinculá-los diretamente:
+
+https://code.jquery.com/jquery-3.6.1.js
+
+https://code.jquery.com/jquery-3.6.1.min.js
+
+Você também pode obter esta versão do npm:
+
+npm install jquery@3.6.1
+Slim
+
+Às vezes, você não precisa de ajax ou prefere usar uma das muitas bibliotecas independentes que se concentram em solicitações de ajax. E muitas vezes é mais simples usar uma combinação de CSS e manipulação de classes para animações da web. Junto com a versão regular do jQuery que inclui os módulos ajax e de efeitos, lançamos uma versão “slim” que exclui esses módulos. O tamanho do jQuery é muito raramente uma preocupação de desempenho de carga nos dias de hoje, mas a versão slim é cerca de 6k gzipped bytes menor que a versão normal. Esses arquivos também estão disponíveis no pacote npm e na CDN:
+
+https://code.jquery.com/jquery-3.6.1.slim.js
+
+https://code.jquery.com/jquery-3.6.1.slim.min.js
+
+Essas atualizações já estão disponíveis como as versões atuais no npm e no Bower. Informações sobre todas as formas de obter jQuery estão disponíveis em https://jquery.com/download/. As CDNs públicas recebem suas cópias hoje, por favor, dê-lhes alguns dias para postar os arquivos. Se você está ansioso para começar rapidamente, use os arquivos em nossa CDN até que eles tenham a chance de atualizar.
+Obrigado
+
+Obrigado a todos vocês que participaram deste lançamento enviando pat

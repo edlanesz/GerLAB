@@ -1,0 +1,200 @@
+{% load static %}
+<header>
+<style>
+/* Controla a altura da navbar */
+.navbar {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  min-height: 56px; /* altura padrão do Bootstrap */
+}
+
+/* Imagem da logo */
+.logo-img {
+  height: 120px;             
+  width: 200px;               
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast; /* melhora nitidez em navegadores baseados em WebKit */
+  image-rendering: crisp-edges;
+}
+</style>
+   <!-- Navbar -->
+   <nav class="navbar navbar-expand-lg navbar-dark bg-rs">
+      <div class="container-fluid">
+         <div class="me-auto">
+     <a class="navbar-brand" href="https://seusite.com/" target="_blank">
+   <img id="logo" src="{% static 'images/gerlab4.png' %}" alt="Nova Logo" class="logo-img">
+</a>
+   </div>
+         <button
+            class="navbar-toggler"
+            type="button"
+            data-mdb-toggle="collapse"
+            data-mdb-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            >
+         <i class="fas fa-bars"></i>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <form class="me-3" method="POST" action="{% url 'main' %}">
+               {% csrf_token %}          
+               <div class="form-white input-group" style="width: 250px">
+                  <input
+                     type="search"
+                     class="form-control rounded"
+                     placeholder="Pesquisar "
+                     aria-label="Search"
+                     aria-describedby="search-addon"
+                     name="filter"
+                     />
+                  <button
+                     type="button"
+                     class="btn btn-primary"
+                     data-bs-toggle="modal"
+                     data-bs-target="#exampleModal"
+                     >
+                  Filtro avançado
+                  </button>
+               </div>
+            </form>
+            <div
+               class="modal fade"
+               id="exampleModal"
+               tabindex="-1"
+               aria-labelledby="exampleModalLabel"
+               aria-hidden="true"
+               >
+               <div class="modal-dialog">
+                  <form method="POST" action="{% url 'main' %}">
+                     {% csrf_token %}
+                     <div class="modal-content">
+                        <div class="modal-header">
+                           <h1 class="modal-title fs-5" id="exampleModalLabel">
+                              Filtro Avançado
+                           </h1>
+                           <button
+                              type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                              ></button>
+                        </div>
+                        <div class="modal-body">
+                           <div class="row">
+                              <div class="col-md-8">
+                                 <input
+                                    class="form-control"
+                                    type="text"
+                                    name="nome_laboratorio"
+                                    placeholder="Nome do Laboratório"
+                                    />
+                              </div>
+                              <div class="col-md-4">
+                                 <select
+                                    class="form-select"
+                                    name="unidade"
+                                    >
+                                    <option value="">Unidade</option>
+                                    {% for unidade in laboratorios %}
+                                    <option value="{{ unidade.unidade }}">
+                                       {{ unidade.unidade }}
+                                    </option>
+                                    {% endfor %}
+                                 </select>
+                              </div>
+                              <div>
+                                 <input class="form-control mt-2" type="text" name="responsavel" placeholder="Responsável" >
+                              </div>
+                              <div>
+                                 <input class="form-control mt-2" type="text" name="pos" placeholder="Programas de Pós-graduação" >
+                              </div>
+                              <div>
+                                 <input class="form-control mt-2" type="text" name="fomento" placeholder="N° do Fomento" >
+                              </div>
+                              <div>
+                                 <input class="form-control mt-2" list="datalistOptions" id="exampleDataList" name="equipamento" placeholder="Nome do Equipamento">
+                                 <datalist id="datalistOptions">
+                                    {% for option in options  %}
+                                    <option value="{{option.nome_equipamento}}">
+                                       {% endfor %}
+                                 </datalist>
+                              </div>
+                              <div>
+                              <input class="form-control mt-2" type="text" name="grupo" placeholder="Nome do Grupo de Pesquisa" data-list="datalistGrupos">
+                              </div>
+                              <div class="d-flex ">
+                              <div class="form-check">
+                              <input class="form-check-input" type="radio" value="True" name="aprovado" id="flexRadioDefault2" >
+                              <label class="form-check-label" for="flexRadioDefault2">
+                              Certificado
+                              </label>
+                              </div>  
+                              <div class="form-check">
+                              <input class="form-check-input" value="False" type="radio" name="aprovado" id="flexRadioDefault1">
+                              <label class="form-check-label" for="flexRadioDefault1">
+                              Aguardando Certificação
+                              </label>
+                              </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                        Pesquisar
+                        </button>
+                        </div>
+                  </form>
+                  </div>
+               </div>
+            </div>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            {% if is_admin %}
+            <li class="nav-item">
+            <a class="nav-link" href="/edit/">
+            <i class="bi bi-journal-plus" style="font-size: 24px; vertical-align: middle;"></i>
+            </a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+            <a class="nav-link" href="/main">
+            <i class="bi bi-house-door" style="font-size: 24px; vertical-align: middle;"></i>
+            </a>
+            </li>
+            </ul>
+            <ul class="navbar-nav d-flex flex-row ms-auto me-3">
+            <li class="nav-item me-3 me-lg-0 dropdown">
+            <a
+               class="nav-link dropdown-toggle"
+               href="#"
+               id="navbarDropdown1"
+               role="button"
+               data-bs-toggle="dropdown"
+               aria-expanded="false"
+               >
+            <i class="fa fa-door-open fa-2x" aria-hidden="true"></i>
+            <!-- Ícone de porta -->
+            </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown1">
+            <li>
+               <form action="{% url 'deslogar' %}" method="POST" style="display: inline;">
+                     {% csrf_token %}
+                     <button type="submit" class="dropdown-item">Sair</button>
+               </form>
+            </li>
+         </ul>
+         </div>
+      </div>
+   </nav>
+   <!-- Navbar -->
+</header>
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+     const button = document.querySelector(".navbar-toggler");
+     const navbar = document.querySelector("#navbarSupportedContent");
+   
+     button.addEventListener("click", function () {
+       navbar.classList.toggle("show"); // Adicione ou remova a classe 'show' para expandir ou recolher a barra de navegação
+     });
+   });
+</script>

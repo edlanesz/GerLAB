@@ -1,0 +1,12 @@
+{% for ato_normativo in atos_normativos %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ ato_normativo.tipo_ato }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ ato_normativo.doe_pagina }} / {{ ato_normativo.doe_numero }}</h6>
+        <p class="card-text">{{ ato_normativo.ementa }}</p>
+        <a href="{% url 'detalhes' ato_normativo.id %}" class="card-link">Abrir</a>
+    </div>
+</div>
+{% empty %}
+<p>Nenhum ato normativo encontrado.</p>
+{% endfor %}

@@ -1,0 +1,116 @@
+{% load static %}
+{% include 'parciais/head.html' %}
+{% include 'parciais/navbar.html' %}
+{% include 'parciais/ferramentas.html' %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-sm-12">
+        <div class="card rounded">
+          <div class="card-header">
+            <h2 class="text-center">Programas de Pós-Graduação</h2>
+          </div>
+      
+          <div class="card-body m-2">
+            {% if pos %}
+
+            <ul class="list-group">
+                {% for pos in pos %}
+                    <li class="list-group-item border rounded-0 p-2 mb-1">
+                        <p class="m-0 mt-1"><span class="card-title"> Nome do Programa de Pós-Graduação :</span> {{ pos.nome_do_Programa }}</p>
+                        <p class="m-0 mt-1"><span class="card-title"> Link do Website:</span> {{ pos.website }}</p>
+            
+                        <!-- Adicione outros campos conforme necessário -->
+            
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-primary editar-formento"
+                                data-bs-target="#modal-editar-formento-{{ pos.id }}" data-bs-toggle="modal">Editar</button>
+            
+                                <form method="POST" action="{% url 'excluir_pos' pos.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+                                  </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+              <p>Nenhuma Pos encontrado para este laboratório.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    <div class="col-md-4 col-sm-12">
+      <div class="card rounded">
+        <div class="card-header">
+          <h2 class="text-center">Adicionar</h2>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{% url 'adicionar_pos' laboratorio.id %}">
+            {% csrf_token %}
+
+            <div class="row">
+              <!-- Adicione os campos do formulário para adicionar um novo formento -->
+
+              <div class="col-12">
+                <label class="fw-bold" for="nome_do_Programa"> Nome do Programa de Pós-Graduação</label>
+                <input type="text" class="form-control shadow-sm" id="nome_do_Programa" name="nome_do_Programa"
+                  required>
+              </div>
+
+              <div class="col-12">
+                <label class="fw-bold mt-3" for="website">Link do Website</label>
+                <input type="text" class="form-control shadow-sm" id="website" name="website" required>
+              </div>
+
+              <!-- Adicione outros campos conforme necessário -->
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary mt-3" name="adicionar_formento">Adicionar Pós-Graduação </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for pos in pos %}
+<div class="modal fade" id="modal-editar-formento-{{ pos.id }}" tabindex="-1" role="dialog" aria-labelledby="editarFormentoLabel{{ pos.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarFormentoLabel{{ pos.id }}">Editar Informações</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulário de Edição -->
+                <form method="POST" action="{% if pos.id %}{% url 'editar_pos' laboratorio.id pos.id %}{% else %}{% url 'adicionar_pos' laboratorio.id %}{% endif %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="edit_nome_do_Programa" class="form-label">Nome do Programa</label>
+                        <input type="text" class="form-control" id="edit_nome_do_Programa" name="nome_do_Programa" value="{{ pos.nome_do_Programa }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_website" class="form-label">Link do Website</label>
+                        <input type="text" class="form-control" id="edit_website" name="website" value="{{ pos.website }}" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% include 'parciais/footer.html'%}
+
+
+<!-- Adicione o script jQuery para sugestões de nomes, se necessário -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  // Adicione o código jQuery, se necessário
+</script>
