@@ -22,7 +22,5 @@ O projeto **InovaLab** foi desenvolvido com foco em escalabilidade, facilidade d
 - **Django**: Framework web robusto para desenvolvimento rápido, seguro e escalável.  
 - **SQLite**: Banco de dados leve e eficiente, utilizado no ambiente de desenvolvimento.  
 - **Docker**: Ferramenta de containerização para facilitar a configuração e o deploy da aplicação.  
-- **Gunicorn**: Servidor WSGI usado para executar aplicações Python em produção.  
-- **Node.js & npm**: Gerenciamento de dependências e scripts do frontend.  
 - **HTML, CSS e JavaScript**: Utilizados na criação da interface do usuário.  
-- **Bootstrap (ou outro framework, se aplicável)**: Framework CSS para layout responsivo.  
+- **Bootstrap: Framework CSS para layout responsivo.  
